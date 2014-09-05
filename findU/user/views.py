@@ -6,7 +6,6 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
-from user.untils import finalusername
 from django.contrib.auth.models import User
 from user.models import UserInfo
 from django.core.urlresolvers import reverse
@@ -43,9 +42,11 @@ def register_mobile(request):
 
 
 def autousername():
-	time=timezone.now().timestamp()
+	# time=timezone.now().timestamp()
+	time=timezone.now()
 	username='u'+str(time)
 	return username
+
 def finalusername():
 	while 1:
 		username=autousername()
@@ -53,4 +54,5 @@ def finalusername():
 			User.objects.get(username)
 		except ObjectDoesNotExist:
 			break
+
 	return username
