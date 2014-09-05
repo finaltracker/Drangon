@@ -2,11 +2,11 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 import json
-from validate.models import MoblieVerifyCode
+from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
-from user.untils import finalusername,hash_sign,verifycode_correct,mobilecode_correct
+from user.untils import finalusername
 from django.contrib.auth.models import User
 from user.models import UserInfo
 from django.core.urlresolvers import reverse
@@ -18,23 +18,13 @@ def register_mobile(request):
 		data={}
 		try:
 			mobile=req['mobile']
-			verifycode=req['verifycode']
 			password=req['password']
 			confirmpass=req['confirmpass']
-			useragreement=req['useragreement']
 		except KeyError:
 			data['status']=14
 			data['error']='缺少必要的项'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json') 
 		
-		if not useragreement:
-			data['status']=13
-			data['error']='必须同意用户协议才能注册'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-		if not mobilecode_correct(mobile,verifycode):
-			data['status']=9
-			data['error']='验证码不正确'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		if password!=confirmpass:
 			data['status']=10
 			data['error']='密码前后不一致'
@@ -52,3 +42,15 @@ def register_mobile(request):
 
 
 
+def autousername():
+	time=timezone.now().timestamp()
+	username='u'+str(time)
+	return username
+def finalusername():
+	while 1:
+		username=autousername()
+		try:
+			User.objects.get(username)
+		except ObjectDoesNotExist:
+			break
+	return username
