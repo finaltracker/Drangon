@@ -16,7 +16,7 @@ class userTests(TestCase):
 		}
 	
 		response = self.client.post(reverse('user:mobile'), 
-			json.dumps(json_data, default=default), content_type='application/json')
+			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
 
 		self.assertEqual(response.content, "ok")
 

@@ -9,11 +9,15 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from user.models import UserInfo
 from django.core.urlresolvers import reverse
+import logging
 
+logger = logging.getLogger(__name__)
 
 def register_mobile(request):
 	if request.method=='POST':
+		logger.debug(str(request.body))
 		req=json.loads(request.body)
+
 		data={}
 		try:
 			mobile=req['mobile']
@@ -29,10 +33,11 @@ def register_mobile(request):
 			data['error']='密码前后不一致'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		password=make_password(password)
-		username=finalusername()
-		user=User(username=username,password=password,is_staff=False,is_active=True,is_superuser=False)
+		user_name=finalusername()
+		logger.debug(str(user_name))
+		user=User(username=user_name,password=password,is_staff=False,is_active=True,is_superuser=False)
 		user.save()
-		user=User.objects.get(username)
+		user=User.objects.get(username=user_name)
 		userinfo=UserInfo(user=user,mobile=mobile)
 		userinfo.save()
 		data['status']=0
@@ -45,14 +50,16 @@ def autousername():
 	# time=timezone.now().timestamp()
 	time=timezone.now()
 	username='u'+str(time)
+	username='u'+str('temp')
 	return username
 
 def finalusername():
 	while 1:
-		username=autousername()
+		user_name=autousername()
+		logger.debug(str(user_name))
 		try:
-			User.objects.get(username)
+			User.objects.get(username = user_name)
 		except ObjectDoesNotExist:
 			break
 
-	return username
+	return user_name
