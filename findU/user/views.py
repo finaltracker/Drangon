@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 import json
+import time
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -48,9 +49,8 @@ def register_mobile(request):
 
 def autousername():
 	# time=timezone.now().timestamp()
-	time=timezone.now()
-	username='u'+str(time)
-	username='u'+str('temp')
+	timestamp=time.time()
+	username='u'+str(timestamp)
 	return username
 
 def finalusername():
