@@ -33,20 +33,41 @@ def register_mobile(request):
 			data['status']=10
 			data['error']='密码前后不一致'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-		password=make_password(password)
-		user_name=finalusername()
-		logger.debug(str(user_name))
+		# password=make_password(password)
+		user_name=mobile
+		logger.debug("[Register]:"+str(user_name)+" / "+str(password))
 		user=User(username=user_name,password=password,is_staff=False,is_active=True,is_superuser=False)
 		user.save()
 		user=User.objects.get(username=user_name)
-		userinfo=UserInfo(user=user,mobile=mobile)
+		userinfo=UserInfo(user=user)
+		userinfo.imei = req['imei']
 		userinfo.save()
 		data['status']=0
 		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-	return HttpResponse(status=400)
+	return HttpResponse(400)
 
+def login(request):
+	
+	if request.method == 'POST':
+		data={}
+		logger.debug(str(request.body))
+		req=json.loads(request.body)
+		mobile = req['mobile']        
+		password = req['password']
+		# password=make_password(password)
+		logger.debug("[Login]:"+str(mobile)+" / "+str(password))
 
+		user = User.objects.filter(username = mobile,password = password)
 
+		if user:
+			logger.debug("user is exist!!")
+			data['status']=0
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+    
+
+	return HttpResponse(503)
+
+"""
 def autousername():
 	# time=timezone.now().timestamp()
 	timestamp=time.time()
@@ -63,3 +84,4 @@ def finalusername():
 			break
 
 	return user_name
+"""	

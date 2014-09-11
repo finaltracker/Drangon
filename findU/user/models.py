@@ -7,5 +7,9 @@ from django.contrib.auth.models import User
 #用户信息表
 class UserInfo(models.Model):
 	user=models.OneToOneField(User)
-	mobile=models.CharField(max_length=11,blank=True)
+	# mobile=models.CharField(max_length=11,blank=True)
+	nickname=models.CharField(max_length=24,blank=True)
+	imei=models.CharField(max_length=32,blank=True)
+	avatar=models.ImageField(upload_to='avatar')
+	reserved=models.CharField(max_length=140)
 

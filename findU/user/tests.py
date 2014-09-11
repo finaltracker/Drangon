@@ -8,15 +8,27 @@ import logging
 
 class userTests(TestCase):
 
-	def test_register_with_user(self):
+	def test_1_register_with_user(self):
 		json_data = {
 			"mobile": 18601612682,
 			"password": "123456",
 			"confirmpass": "123456",
+			'imei': 12345993,
 		}
 	
-		response = self.client.post(reverse('user:mobile'), 
+		response = self.client.post(reverse('user:register'), 
 			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
 
 		self.assertEqual(response.content, "ok")
+
+	def test_2_login_with_user(self):
+		json_data = {
+			"mobile": 18601612682,
+			"password": "123456",
+		}
+	
+		response = self.client.post(reverse('user:login'), 
+			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
+
+		self.assertEqual(response.content, "ok")		
 
