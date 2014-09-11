@@ -30,5 +30,15 @@ class userTests(TestCase):
 		response = self.client.post(reverse('user:login'), 
 			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
 
-		self.assertEqual(response.content, "ok")		
+		self.assertEqual(response.content, "ok")
+
+	def test_3_check_register(self):
+		json_data = {
+			"imei": 12345993,
+		}
+	
+		response = self.client.post(reverse('user:check'), 
+			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
+
+		self.assertEqual(response.content, "ok")
 

@@ -47,7 +47,6 @@ def register_mobile(request):
 	return HttpResponse(400)
 
 def login(request):
-	
 	if request.method == 'POST':
 		data={}
 		logger.debug(str(request.body))
@@ -62,6 +61,25 @@ def login(request):
 		if user:
 			logger.debug("user is exist!!")
 			data['status']=0
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+    
+
+	return HttpResponse(503)
+
+def check_register(request):	
+	if request.method == 'POST':
+		data={}
+		logger.debug(str(request.body))
+		req=json.loads(request.body)
+		imei = req['imei']        
+
+		logger.debug("[Check_Register]:"+str(imei))
+
+		user_info = UserInfo.objects.get(imei=imei)
+
+		if user_info:
+			logger.debug("user is: "+user_info.user.username)
+			data['username']=user_info.user.username
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
     
 
