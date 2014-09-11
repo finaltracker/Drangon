@@ -1,0 +1,43 @@
+check if register:
+request:
+    url:user/check
+    parameters:
+    {
+	"imei": xxxx,
+    }
+response:
+success return:
+    {
+	"mobile": xxxx,
+    }
+
+register:
+request:
+    url:user/register
+    parameters:
+    {
+	"mobile": xxxx,
+	"password": xxxx,
+	"confirmpass": xxxx,
+	"imei": xxxx,
+    }
+response:
+success return:
+    {
+	"status": 0
+    }
+
+login:
+request:
+    url:user/login
+    parameters:
+    {
+	"mobile": xxxx,
+	"password": xxxx,
+    }
+response:
+success return:
+    {
+	"status": 0
+    }
+
