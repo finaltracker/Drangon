@@ -10,6 +10,10 @@ success return:
     {
 	"mobile": xxxx,
     }
+error return:
+    {
+	"status": 503,
+    }
 
 register:
 request:
@@ -26,6 +30,10 @@ success return:
     {
 	"status": 0
     }
+error return:
+    {
+	"status": 400,
+    }
 
 login:
 request:
@@ -41,3 +49,7 @@ success return:
 	"status": 0
     }
 
+error return:
+    {
+	"status": 503,
+    }

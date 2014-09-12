@@ -9,7 +9,7 @@ class UserInfo(models.Model):
 	user=models.OneToOneField(User)
 	# mobile=models.CharField(max_length=11,blank=True)
 	nickname=models.CharField(max_length=24,blank=True)
-	imei=models.CharField(max_length=32,blank=True)
+	imsi=models.CharField(max_length=32,blank=True)
 	avatar=models.ImageField(upload_to='avatar')
 	reserved=models.CharField(max_length=140)
 

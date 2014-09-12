@@ -13,7 +13,7 @@ class userTests(TestCase):
 			"mobile": 18601612682,
 			"password": "123456",
 			"confirmpass": "123456",
-			'imei': 12345993,
+			'imsi': 12345993,
 		}
 	
 		response = self.client.post(reverse('user:register'), 
@@ -34,7 +34,7 @@ class userTests(TestCase):
 
 	def test_3_check_register(self):
 		json_data = {
-			"imei": 12345993,
+			"imsi": 12345993,
 		}
 	
 		response = self.client.post(reverse('user:check'), 

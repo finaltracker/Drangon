@@ -40,7 +40,7 @@ def register_mobile(request):
 		user.save()
 		user=User.objects.get(username=user_name)
 		userinfo=UserInfo(user=user)
-		userinfo.imei = req['imei']
+		userinfo.imsi = req['imsi']
 		userinfo.save()
 		data['status']=0
 		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
@@ -71,19 +71,20 @@ def check_register(request):
 		data={}
 		logger.debug(str(request.body))
 		req=json.loads(request.body)
-		imei = req['imei']        
-
-		logger.debug("[Check_Register]:"+str(imei))
-
-		user_info = UserInfo.objects.get(imei=imei)
+		imsi = req['imsi']        
+		
+		logger.debug("[Check_Register]:"+str(imsi))
+		try:
+			user_info = UserInfo.objects.get(imsi=imsi)
+		except ObjectDoesNotExist:
+			return HttpResponse(503)
 
 		if user_info:
 			logger.debug("user is: "+user_info.user.username)
 			data['username']=user_info.user.username
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-    
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')  
 
-	return HttpResponse(503)
+	
 
 """
 def autousername():
