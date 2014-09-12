@@ -1,9 +1,9 @@
 check if register:
 request:
-    url:user/check
+    url:user/check_register
     parameters:
     {
-	"imei": xxxx,
+	"imsi": xxxx,
     }
 response:
 success return:
@@ -23,7 +23,7 @@ request:
 	"mobile": xxxx,
 	"password": xxxx,
 	"confirmpass": xxxx,
-	"imei": xxxx,
+	"imsi": xxxx,
     }
 response:
 success return:

@@ -69,13 +69,13 @@ def login(request):
 def check_register(request):	
 	if request.method == 'POST':
 		data={}
-		logger.debug(str(request.body))
-		req=json.loads(request.body)
-		imsi = req['imsi']        
+		logger.debug(str(request.POST))
+		# req=json.loads(request.body)
+		my_imsi = request.POST.get('imsi')     
 		
-		logger.debug("[Check_Register]:"+str(imsi))
+		logger.debug("[Check_Register]:"+str(my_imsi))
 		try:
-			user_info = UserInfo.objects.get(imsi=imsi)
+			user_info = UserInfo.objects.get(imsi=my_imsi)
 		except ObjectDoesNotExist:
 			return HttpResponse(503)
 
