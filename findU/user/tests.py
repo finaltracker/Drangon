@@ -15,8 +15,7 @@ class userTests(TestCase):
 			'imsi': 12345993,
 		}
 	
-		response = self.client.post(reverse('user:register'), 
-			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
+		response = self.client.post(reverse('user:register'), json_data)
 
 		self.assertEqual(response.content, "ok")
 
@@ -26,8 +25,7 @@ class userTests(TestCase):
 			"password": "123456",
 		}
 	
-		response = self.client.post(reverse('user:login'), 
-			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
+		response = self.client.post(reverse('user:login'), json_data)
 
 		self.assertEqual(response.content, "ok")
 
@@ -36,8 +34,7 @@ class userTests(TestCase):
 			"imsi": 12345993,
 		}
 	
-		response = self.client.post(reverse('user:check_register'), 
-			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
+		response = self.client.post(reverse('user:check_register'), json_data) 
 
 		self.assertEqual(response.content, "ok")
 

@@ -16,14 +16,13 @@ logger = logging.getLogger(__name__)
 
 def register_mobile(request):
 	if request.method=='POST':
-		logger.debug(str(request.body))
-		req=json.loads(request.body)
+		logger.debug(str(request.POST))
 
 		data={}
 		try:
-			mobile=req['mobile']
-			password=req['password']
-			confirmpass=req['confirmpass']
+			mobile=request.POST.get('mobile')
+			password=request.POST.get('password')
+			confirmpass=request.POST.get('confirmpass')
 		except KeyError:
 			data['status']=14
 			data['error']='缺少必要的项'
@@ -40,7 +39,7 @@ def register_mobile(request):
 		user.save()
 		user=User.objects.get(username=user_name)
 		userinfo=UserInfo(user=user)
-		userinfo.imsi = req['imsi']
+		userinfo.imsi = request.POST.get('imsi')
 		userinfo.save()
 		data['status']=0
 		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
@@ -49,10 +48,9 @@ def register_mobile(request):
 def login(request):
 	if request.method == 'POST':
 		data={}
-		logger.debug(str(request.body))
-		req=json.loads(request.body)
-		mobile = req['mobile']        
-		password = req['password']
+		logger.debug(str(request.POST))
+		mobile = request.POST.get('mobile' )       
+		password = request.POST.get('password')
 		# password=make_password(password)
 		logger.debug("[Login]:"+str(mobile)+" / "+str(password))
 
