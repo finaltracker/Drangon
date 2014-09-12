@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.utils import timezone
-from bson.json_util import default, object_hook
 import json
 import logging
 
@@ -37,7 +36,7 @@ class userTests(TestCase):
 			"imsi": 12345993,
 		}
 	
-		response = self.client.post(reverse('user:check'), 
+		response = self.client.post(reverse('user:check_register'), 
 			json.dumps(json_data,ensure_ascii=False), content_type='application/json')
 
 		self.assertEqual(response.content, "ok")

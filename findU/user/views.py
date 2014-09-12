@@ -82,7 +82,9 @@ def check_register(request):
 		if user_info:
 			logger.debug("user is: "+user_info.user.username)
 			data['username']=user_info.user.username
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')  
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+	else:
+		return HttpResponse(400)  
 
 	
 
