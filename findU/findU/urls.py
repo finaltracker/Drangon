@@ -10,4 +10,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^user/',include('user.urls',namespace='user')),
+    url(r'^feed/',include('feed.urls',namespace='feed')),
 )

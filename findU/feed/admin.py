@@ -1,3 +1,4 @@
 from django.contrib import admin
+from feed.models import PosInfo
 
-# Register your models here.
+admin.site.register(PosInfo)
