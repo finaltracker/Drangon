@@ -19,6 +19,18 @@ class userTests(TestCase):
 
 		self.assertEqual(response.content, "ok")
 
+	def test_1_register_with_diff_password(self):
+		json_data = {
+			"mobile": 18601612682,
+			"password": "123456",
+			"confirmpass": "125456",
+			'imsi': 12345993,
+		}
+	
+		response = self.client.post(reverse('user:register'), json_data)
+
+		self.assertEqual(response.content, "ok")		
+
 	def test_2_login_with_user(self):
 		json_data = {
 			"mobile": 18601612682,

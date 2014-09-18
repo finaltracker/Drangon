@@ -24,28 +24,41 @@ def register_mobile(request):
 			mobile=request.POST.get('mobile')
 			password=request.POST.get('password')
 			confirmpass=request.POST.get('confirmpass')
+			own_imsi=request.POST.get('imsi')
 		except KeyError:
 			data['status']=14
-			data['error']='缺少必要的项'
+			data['error']='missing items'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json') 
 		
 		if password!=confirmpass:
 			data['status']=10
-			data['error']='密码前后不一致'
+			data['error']='password not correct'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		# password=make_password(password)
 		user_name=mobile
 		logger.debug("[Register]:"+str(user_name)+" / "+str(password))
-		user=User(username=user_name,password=password,is_staff=False,is_active=True,is_superuser=False)
-		user.save()
-		user=User.objects.get(username=user_name)
-		userinfo=UserInfo(user=user)
-		userinfo.imsi = request.POST.get('imsi')
-		userinfo.save()
-		data['status']=0
-		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+		try:
+			check_user = User.objects.get(username=user_name)
+			data['status']=16
+			data['error']='mobile already used'
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+		except ObjectDoesNotExist:
+			try:
+				check_user_info = UserInfo.objects.get(imsi=own_imsi)
+				data['status']=22
+				data['error']='imsi already used'
+				return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			except ObjectDoesNotExist:
+				user=User(username=user_name,password=password,is_staff=False,is_active=True,is_superuser=False)
+				user.save()
+				user=User.objects.get(username=user_name)
+				userinfo=UserInfo(user=user)
+				userinfo.imsi = own_imsi
+				userinfo.save()
+				data['status']=0
+				return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-	data['status']=400
+	data['status']=404
 	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')		
 
 
