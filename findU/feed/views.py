@@ -14,8 +14,9 @@ master_secret=u'73a3804d64c99222e3c344db'
 threshold = 0.5
 
 def locate_update(request):
-	if request.method=='POST':
-		data = {}
+	data = {}
+
+	if request.method=='POST':		
 		logger.debug(str(request.POST))
 
 		src_user=request.POST.get('src_user')
@@ -44,12 +45,14 @@ def locate_update(request):
 			data['status']=0
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-	return HttpResponse(503)
+	data['status']=503
+	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
 
 def locate_upload(request):
-	if request.method=='POST':
-		data = {}
+	data = {}
+
+	if request.method=='POST':		
 		logger.debug(str(request.POST))
 
 		user_name=request.POST.get('username')
@@ -65,4 +68,5 @@ def locate_upload(request):
 		data['status']=0
 		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-	return HttpResponse(503)
+	data['status']=503
+	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')

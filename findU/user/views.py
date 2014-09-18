@@ -15,10 +15,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 def register_mobile(request):
+	data={}
+
 	if request.method=='POST':
 		logger.debug(str(request.POST))
-
-		data={}
+		
 		try:
 			mobile=request.POST.get('mobile')
 			password=request.POST.get('password')
@@ -43,11 +44,15 @@ def register_mobile(request):
 		userinfo.save()
 		data['status']=0
 		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-	return HttpResponse(400)
+
+	data['status']=400
+	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')		
+
 
 def login(request):
-	if request.method == 'POST':
-		data={}
+	data={}
+
+	if request.method == 'POST':		
 		logger.debug(str(request.POST))
 		mobile = request.POST.get('mobile' )       
 		password = request.POST.get('password')
@@ -61,12 +66,13 @@ def login(request):
 			data['status']=0
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
     
+	data['status']=503
+	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-	return HttpResponse(503)
+def check_register(request):
+	data={}
 
-def check_register(request):	
-	if request.method == 'POST':
-		data={}
+	if request.method == 'POST':		
 		logger.debug(str(request.POST))
 		# req=json.loads(request.body)
 		my_imsi = request.POST.get('imsi')     
@@ -75,14 +81,18 @@ def check_register(request):
 		try:
 			user_info = UserInfo.objects.get(imsi=my_imsi)
 		except ObjectDoesNotExist:
-			return HttpResponse(503)
+			data['status']=503
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
 		if user_info:
 			logger.debug("user is: "+user_info.user.username)
+			data['status']=0
 			data['username']=user_info.user.username
+			data['nickname']=user_info.user.nickname
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-	else:
-		return HttpResponse(400)  
+
+	data['status']=400
+	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
 	
 
