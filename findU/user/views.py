@@ -101,7 +101,7 @@ def check_register(request):
 			logger.debug("user is: "+user_info.user.username)
 			data['status']=0
 			data['username']=user_info.user.username
-			data['nickname']=user_info.user.nickname
+			data['nickname']=user_info.nickname
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
 	data['status']=400

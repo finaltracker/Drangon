@@ -8,7 +8,8 @@ request:
 response:
 success return:
     {
-	"mobile": xxxx,
+	"username": xxxx,
+	"nickname": xxxx,
     }
 error return:
     {
@@ -31,8 +32,25 @@ success return:
 	"status": 0
     }
 error return:
+1.missing item
     {
-	"status": 400,
+	"status": 14,
+	"error": "missing items",
+    }
+2. password don't match
+    {
+	"status": 10,
+	"error": "password not correct",
+    }
+3. mobile number have already register
+    {
+	"status": 16,
+	"error": "mobile already used",
+    }
+4. imsi have already used
+    {
+	"status": 22,
+	"error": "imsi already used",
     }
 
 login:
