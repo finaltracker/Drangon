@@ -1,0 +1,2 @@
+app_key=u'03ad7d3fd09762fc3887283e'
+master_secret=u'73a3804d64c99222e3c344db'

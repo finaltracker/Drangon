@@ -7,9 +7,8 @@ from django.utils import timezone
 import json
 import jpush as jpush
 import logging
+from findU.conf import app_key, master_secret
 
-app_key=u'03ad7d3fd09762fc3887283e'
-master_secret=u'73a3804d64c99222e3c344db'
 # delta set as : half hour
 threshold = 0.5
 
