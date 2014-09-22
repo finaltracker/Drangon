@@ -3,12 +3,15 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from friend.models import Friend
 from user.models import UserInfo
+from django.core.exceptions import ObjectDoesNotExist
 import time
 from django.utils import timezone
 import json
 import jpush as jpush
 import logging
 from findU.conf import app_key, master_secret
+import logging
+logger = logging.getLogger(__name__)
 
 def add_friend(request):
 	data = {}
@@ -69,7 +72,7 @@ def ok_friend(request):
 		target_user=request.POST.get('target_user')
 
 		try:
-			target_user = User.objects.get(username=target_user)
+			target = User.objects.get(username=target_user)
 
 			_jpush = jpush.JPush(app_key, master_secret)
 			push = _jpush.create_push()

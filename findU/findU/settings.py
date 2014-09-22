@@ -103,6 +103,10 @@ LOGGING = {
         'user': {
             'handlers': ['file'],
             'level': 'DEBUG'
-        },      
+        }, 
+        'friend': {
+            'handlers': ['file'],
+            'level': 'DEBUG'
+        },              
     },
 }
