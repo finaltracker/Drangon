@@ -10,6 +10,7 @@ request:
 response:
 success return:
     {
+	"status": 0,
 	"username": xxxx,
 	"nickname": xxxx,
     }
