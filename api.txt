@@ -1,3 +1,5 @@
+USER MODULE:
+
 check if register:
 request:
     url:user/check_register
@@ -70,4 +72,81 @@ success return:
 error return:
     {
 	"status": 503,
+    }
+
+####################################
+FRIEND MODULE:
+
+add friend:
+request:
+    url:friend/add_friend
+    parameters:
+    {
+	"imsi": xxxx,
+	"target_user": xxxx,
+    }
+response:
+success return:
+    {
+	"status": 0
+    }
+
+error return:
+1. target user don't register:
+    {
+	"status": 28,
+	"error": "user have not register",
+    }
+2. source user don't exist:
+    {
+	"status": 34,
+	"error": "user do not exist",
+    }
+
+ok friend:
+request:
+    url:friend/ok_friend
+    parameters:
+    {
+	"nok": x, //1: agree, 0: disagree
+	"imsi": xxxx,
+	"target_user": xxxx,
+    }
+response:
+success return:
+    {
+	"status": 0
+    }
+
+error return:
+1. target user don't register:
+    {
+	"status": 28,
+	"error": "user have not register",
+    }
+2. source user don't exist:
+    {
+	"status": 34,
+	"error": "user do not exist",
+    }
+
+get friend:
+request:
+    url:friend/get_friend
+    parameters:
+    {
+	"friend": xxxx,
+    }
+response:
+success return:
+    {
+	"status": 0,
+	"username": xxxx,
+	"nickname": xxxx,
+    }
+
+error return:
+    {
+	"status": 34,
+	"error": "user do not exist",
     }

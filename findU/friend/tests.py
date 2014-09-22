@@ -9,7 +9,7 @@ class friendTests(TestCase):
 
 	def test_add_friend(self):
 		json_data = {
-			"src_user": 18601612682,
+			'imsi': 12345993,
 			"target_user": 13636630387,
 		}
 	
@@ -29,7 +29,7 @@ class friendTests(TestCase):
 	def test_ok_friend(self):
 		json_data = {
 			"nok": 1,
-			"src_user": 18601612682,
+			'imsi': 12345993,
 			"target_user": 13636630387,
 		}
 	

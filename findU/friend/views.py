@@ -18,8 +18,16 @@ def add_friend(request):
 
 	if request.method == 'POST':		
 		logger.debug(str(request.POST))
+		
+		src_imsi = request.POST.get('imsi')
+		try:
+			src_user_info = UserInfo.objects.get(imsi = src_imsi)
+			src_user = src_user_info.user.username
+		except ObjectDoesNotExist:
+			data['status']=34
+			data['error']='user do not exist'
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-		src_user=request.POST.get('src_user')
 		target_user=request.POST.get('target_user')
 
 		try:
@@ -30,7 +38,7 @@ def add_friend(request):
 			push.audience = jpush.audience(
 				jpush.tag("tag1", target_user)
 			)
-			push.message = jpush.message(msg_content="add friend", extras=src_user)
+			push.message = jpush.message(msg_content=201, extras=src_user)
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
@@ -68,7 +76,15 @@ def ok_friend(request):
 		logger.debug(str(request.POST))
 
 		nok = request.POST.get('nok')
-		src_user=request.POST.get('src_user')
+		src_imsi = request.POST.get('imsi')
+		try:
+			src_user_info = UserInfo.objects.get(imsi = src_imsi)
+			src_user = src_user_info.user.username
+		except ObjectDoesNotExist:
+			data['status']=34
+			data['error']='user do not exist'
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			
 		target_user=request.POST.get('target_user')
 
 		try:
@@ -79,7 +95,7 @@ def ok_friend(request):
 			push.audience = jpush.audience(
 				jpush.tag("tag1", target_user)
 			)
-			push.message = jpush.message(msg_content="ok friend", extras=src_user)
+			push.message = jpush.message(msg_content=202, extras=src_user)
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
