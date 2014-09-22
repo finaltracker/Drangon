@@ -38,9 +38,9 @@ def add_friend(request):
 			_jpush = jpush.JPush(app_key, master_secret)
 			push = _jpush.create_push()
 			push.audience = jpush.audience(
-				jpush.tag("tag1", push_target)
+				jpush.tag(push_target)
 			)
-			push.message = jpush.message(msg_content=201, extras=src_user)
+			push.message = jpush.message(msg_content=201, extras=str(src_user))
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
@@ -97,9 +97,9 @@ def ok_friend(request):
 			_jpush = jpush.JPush(app_key, master_secret)
 			push = _jpush.create_push()
 			push.audience = jpush.audience(
-				jpush.tag("tag1", push_target)
+				jpush.tag(push_target)
 			)
-			push.message = jpush.message(msg_content=202, extras=src_user)
+			push.message = jpush.message(msg_content=202, extras=str(src_user))
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
