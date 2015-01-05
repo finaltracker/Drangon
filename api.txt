@@ -83,8 +83,9 @@ request:
     url:friend/add_friend
     parameters:
     {
-	"imsi": xxxx,
+	"imsi": xxxx,  //my imsi 
 	"target_user": xxxx,
+	"comment": xxxx,
     }
 response:
 success return:
@@ -144,6 +145,7 @@ success return:
 	"status": 0,
 	"username": xxxx,
 	"nickname": xxxx,
+	"comment": xxxx,
     }
 
 error return:
@@ -151,3 +153,33 @@ error return:
 	"status": 34,
 	"error": "user do not exist",
     }
+
+search friend/circle:
+request:
+  url:friend/search_friend
+  parameters:
+  {
+    "search_str": xxxx,
+  }
+response:
+  success return:
+  {
+    "status": 0,
+    "friends": [
+    { "nickname": xxxx,
+      "avatar_url": xxxx,
+      "mobile": xxx,
+    },{}
+    ]
+    "circle": [
+    { "circlename": xxx,
+      "circle_url": xxx,
+    }, {}
+    ]
+  }
+  fail return:
+  {
+    "status": 55,
+    "error": "undefine error",
+  }
+  
