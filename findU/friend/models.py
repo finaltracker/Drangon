@@ -6,7 +6,9 @@ class Friend(models.Model):
 	nickname = models.CharField(max_length=200)
 	phone_mobile = models.CharField(max_length=200)
 	avatar = models.ImageField(upload_to='avatar')
+	version_id = models.IntegerField(default=0)
 	reserved=models.CharField(max_length=140)
 	
-	def __unicode__(self):
+	def __str__(self):
 		return self.phone_mobile
+	

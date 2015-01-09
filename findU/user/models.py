@@ -11,5 +11,6 @@ class UserInfo(models.Model):
 	nickname=models.CharField(max_length=24,blank=True)
 	imsi=models.CharField(max_length=32,blank=True)
 	avatar=models.ImageField(upload_to='avatar')
+	version_count = models.IntegerField(default=0)
 	reserved=models.CharField(max_length=140)
 
