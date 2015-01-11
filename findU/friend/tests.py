@@ -36,3 +36,13 @@ class friendTests(TestCase):
 		response = self.client.post(reverse('friend:accept_friend'), json_data)
 
 		self.assertEqual(response.content, "ok")
+
+	# todo: fix it
+	def test_update_friend(self):
+		json_data = {
+			"friend": 13636630387,
+		}
+
+		response = self.client.post(reverse('friend:update_friend'), json_data)
+
+		self.assertEqual(response.content, "ok")
