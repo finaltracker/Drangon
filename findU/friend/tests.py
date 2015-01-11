@@ -12,7 +12,7 @@ class friendTests(TestCase):
 			'imsi': 12345993,
 			"target_user": 13636630387,
 		}
-	
+
 		response = self.client.post(reverse('friend:add_friend'), json_data)
 
 		self.assertEqual(response.content, "ok")
@@ -21,18 +21,18 @@ class friendTests(TestCase):
 		json_data = {
 			"friend": 13636630387,
 		}
-	
+
 		response = self.client.post(reverse('friend:get_friend'), json_data)
 
 		self.assertEqual(response.content, "ok")
 
-	def test_ok_friend(self):
+	def test_accept_friend(self):
 		json_data = {
 			"nok": 1,
 			'imsi': 12345993,
 			"target_user": 13636630387,
 		}
-	
-		response = self.client.post(reverse('friend:ok_friend'), json_data)
 
-		self.assertEqual(response.content, "ok")				
+		response = self.client.post(reverse('friend:accept_friend'), json_data)
+
+		self.assertEqual(response.content, "ok")
