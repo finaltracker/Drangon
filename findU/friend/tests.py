@@ -7,6 +7,9 @@ import logging
 
 class friendTests(TestCase):
 
+	def setUp(self):
+		pass
+		
 	def test_add_friend(self):
 		json_data = {
 			'imsi': 12345993,

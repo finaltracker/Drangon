@@ -190,3 +190,37 @@ def update_friend(request):
 			data['status']=28
 			data['error']='user have not register'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+
+def search_friend(request):
+	data = {}
+
+	if request.method == 'POST':
+		logger.debug(str(request.POST))
+
+		search_friend = request.POST.get('search_str')
+
+		try:
+			result = Friend.objects.get(nickname=search_friend)
+
+			record_list = []
+			for friend in result:
+				record = {}
+				record['group'] = friend.group
+				record['nickname'] = friend.nickname
+				record['avatar'] = friend.avatar
+				record['mobile'] = friend.phone_mobile
+
+				record_list.append(record)
+
+			data['status'] = 0
+			data['friends'] = json.dumps(record_list,ensure_ascii=False)
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+		except ObjectDoesNotExist:
+			data['status']=0
+			data['friends']= []
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			
+		data['status']=55
+		data['error']='undefine error'
+		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')			
+
