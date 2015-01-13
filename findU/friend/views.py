@@ -13,6 +13,7 @@ from findU.conf import app_key, master_secret
 import logging
 logger = logging.getLogger(__name__)
 
+ 
 def add_friend(request):
 	data = {}
 
@@ -85,12 +86,12 @@ def get_friend(request):
 		client_friends = []
 		try:
 			client_user = User.objects.get(username=client)
-			client_info = UserInfo.objects.get(imsi=client_imsi)
+			client_info = UserInfo.objects.get(user=client_user)
 			current_version = client_info.version_count
-			if(current_version-mobile_friend_version == 0):
+			if(current_version-int(mobile_friend_version) == 0):
 				logger.debug("something goes wrong!!")
 
-			if(current_version-mobile_friend_version < 2):
+			if(current_version-int(mobile_friend_version) < 2):
 				data["update_type"]=2
 				client_friends = Friend.objects.filter(user=client_user).filter(version_id__gt=mobile_friend_version)
 			else:
@@ -102,7 +103,7 @@ def get_friend(request):
 				record = {}
 				record['group'] = friend.group
 				record['nickname'] = friend.nickname
-				record['avatar'] = friend.avatar
+				# record['avatar'] = friend.avatar
 				record['mobile'] = friend.phone_mobile
 
 				record_list.append(record)
@@ -169,19 +170,26 @@ def update_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
-		update_user = request.POST.get('user')
-		nick_name = request.POST.get('nickname')
+		client = request.POST.get('client')
+		nick_name = request.POST.get('nick_name')
 		avatar_url = request.POST.get('avatar_url')
 		mobile = request.POST.get('mobile')
 
 		try:
-			update_user_info = UserInfo.objects.get(username = update_user)
-			my_friend = Friend.objects.get(user=update_user_info)
-			my_friend.avatar = avatar_url
+			client_user = User.objects.get(username = client)
+			client_user_info = UserInfo.objects.get(user=client_user)
+			logger.debug("friend nickname is "+nick_name)
+			my_friend = Friend.objects.get(user=client_user,nickname=nick_name)
+
+			import pdb; pdb.set_trace()
+			# my_friend.avatar = avatar_url
 			my_friend.phone_mobile = mobile
-			current_version = update_user_info.version_count + 1
+			current_version = client_user_info.version_count + 1
 			my_friend.version_id = current_version
 			my_friend.save()
+
+			client_user_info.version_count = current_version
+			client_user_info.save()
 
 			data['status']=0
 			data['server_friend_version']=current_version
@@ -207,7 +215,7 @@ def search_friend(request):
 				record = {}
 				record['group'] = friend.group
 				record['nickname'] = friend.nickname
-				record['avatar'] = friend.avatar
+				# record['avatar'] = friend.avatar
 				record['mobile'] = friend.phone_mobile
 
 				record_list.append(record)
