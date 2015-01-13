@@ -123,6 +123,7 @@ def accept_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
+		client = request.POST.get('client')
 		nok = request.POST.get('nok')
 		src_imsi = request.POST.get('imsi')
 		try:
@@ -205,10 +206,12 @@ def search_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
+		client = request.POST.get('client')
 		search_friend = request.POST.get('search_str')
 
 		try:
-			result = Friend.objects.get(nickname=search_friend)
+			client_user = User.objects.get(username = client)
+			result = Friend.objects.filter(user=client_user, nickname=search_friend)
 
 			record_list = []
 			for friend in result:

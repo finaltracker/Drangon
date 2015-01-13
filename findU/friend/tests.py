@@ -31,7 +31,7 @@ class friendTests(TestCase):
 
 		json_data = {
 			"client": 'test1',
-			"client_imsi": 12345993,
+			"imsi": 12345993,
 			"mobile_friend_version": 1,
 		}
 
@@ -50,7 +50,6 @@ class friendTests(TestCase):
 
 		self.assertEqual(response.content, "ok")
 
-	# todo: fix it
 	def test_update_friend(self):
 
 		self.prepare_data()
@@ -65,6 +64,19 @@ class friendTests(TestCase):
 		response = self.client.post(reverse('friend:update_friend'), json_data)
 
 		self.assertEqual(response.content, "ok")
+
+	def test_search_friend(self):
+
+		self.prepare_data()
+
+		json_data = {
+			"client": 'test1',
+			"search_str": 'cat',
+		}
+
+		response = self.client.post(reverse('friend:search_friend'), json_data)
+
+		self.assertEqual(response.content, "ok")		
 
 	def prepare_data(self):
 		test1 = User.objects.create(username='test1')
