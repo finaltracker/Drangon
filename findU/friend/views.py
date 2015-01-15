@@ -211,15 +211,16 @@ def search_friend(request):
 
 		try:
 			client_user = User.objects.get(username = client)
-			result = Friend.objects.filter(user=client_user, nickname=search_friend)
+			result = User.objects.filter(username=search_friend)
 
 			record_list = []
 			for friend in result:
+				get_friend = UserInfo.objects.get(user=friend)
 				record = {}
-				record['group'] = friend.group
-				record['nickname'] = friend.nickname
+				# record['group'] = friend.group
+				record['nickname'] = get_friend.nickname
 				# record['avatar'] = friend.avatar
-				record['mobile'] = friend.phone_mobile
+				record['mobile'] = friend.username
 
 				record_list.append(record)
 
