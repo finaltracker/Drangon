@@ -6,6 +6,7 @@ from user.models import UserInfo
 from django.core.exceptions import ObjectDoesNotExist
 import time
 from django.utils import timezone
+from django.utils.encoding import smart_unicode
 import json
 import jpush as jpush
 import logging
@@ -101,16 +102,17 @@ def get_friend(request):
 			record_list = []
 			for friend in client_friends:
 				record = {}
-				record['group'] = friend.group
-				record['nickname'] = friend.nickname
+				record['group'] = smart_unicode(friend.group)
+				record['nickname'] = smart_unicode(friend.nickname)
 				# record['avatar'] = friend.avatar
-				record['mobile'] = friend.phone_mobile
+				record['mobile'] = smart_unicode(friend.phone_mobile)
 
+				logger.debug("record :"+str(record))
 				record_list.append(record)
 
 			data['status']=0
 			data['server_friend_version']=current_version
-			data['friends']=json.dumps(record_list,ensure_ascii=False)
+			data['friends']=record_list
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
@@ -218,14 +220,14 @@ def search_friend(request):
 				get_friend = UserInfo.objects.get(user=friend)
 				record = {}
 				# record['group'] = friend.group
-				record['nickname'] = get_friend.nickname
+				record['nickname'] = smart_unicode(get_friend.nickname)
 				# record['avatar'] = friend.avatar
-				record['mobile'] = friend.username
+				record['mobile'] = smart_unicode(friend.username)
 
 				record_list.append(record)
 
 			data['status'] = 0
-			data['friends'] = json.dumps(record_list,ensure_ascii=False)
+			data['friends'] = record_list
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=0
