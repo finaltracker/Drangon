@@ -104,7 +104,8 @@ def get_friend(request):
 				record = {}
 				record['group'] = smart_unicode(friend.group)
 				record['nickname'] = smart_unicode(friend.nickname)
-				# record['avatar'] = friend.avatar
+				#TODO: fix it
+				record['avatar'] = ""
 				record['mobile'] = smart_unicode(friend.phone_mobile)
 
 				logger.debug("record :"+str(record))
@@ -184,8 +185,9 @@ def update_friend(request):
 			logger.debug("friend nickname is "+nick_name)
 			my_friend = Friend.objects.get(user=client_user,nickname=nick_name)
 
-			import pdb; pdb.set_trace()
-			# my_friend.avatar = avatar_url
+			# set breakpoint to trace
+			#import pdb; pdb.set_trace()
+			#my_friend.avatar.url = avatar_url
 			my_friend.phone_mobile = mobile
 			current_version = client_user_info.version_count + 1
 			my_friend.version_id = current_version
@@ -221,7 +223,7 @@ def search_friend(request):
 				record = {}
 				# record['group'] = friend.group
 				record['nickname'] = smart_unicode(get_friend.nickname)
-				# record['avatar'] = friend.avatar
+				record['avatar'] = ""
 				record['mobile'] = smart_unicode(friend.username)
 
 				record_list.append(record)
