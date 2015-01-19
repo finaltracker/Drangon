@@ -101,8 +101,9 @@ def get_friend(request):
 
 		client_friends = []
 		try:
-			client_user = User.objects.get(username=client)
-			client_info = UserInfo.objects.get(user=client_user)
+			#client_user = User.objects.get(username=client)
+			client_info = UserInfo.objects.get(imsi=client_imsi)
+			client_user = client_info.user
 			current_version = client_info.version_count
 			if(current_version-int(mobile_friend_version) == 0):
 				logger.debug("something goes wrong!!")
@@ -112,7 +113,7 @@ def get_friend(request):
 				client_friends = Friend.objects.filter(user=client_user).filter(version_id__gt=mobile_friend_version)
 			else:
 				data['update_type']=1
-				client_friends = Friend.objects.all()
+				client_friends = Friend.objects.filter(user=client_user)
 
 			record_list = []
 			if client_friends:
