@@ -14,7 +14,7 @@ from findU.conf import app_key, master_secret
 import logging
 logger = logging.getLogger(__name__)
 
- 
+
 def add_friend(request):
 	data = {}
 
@@ -44,12 +44,13 @@ def add_friend(request):
 			wait_friend = Friend.objects.create(user = src_user, nickname=user_info.nickname)
 			current_version = src_user_info.version_count + 1
 			wait_friend.verify_status = 2
+			wait_friend.group = 'unverified'
 			wait_friend.version_id = current_version
 			wait_friend.save()
 
 			src_user_info.version_count = current_version
 			src_user_info.save()
-			
+
 			push_target = user_info.imsi
 
 			_jpush = jpush.JPush(app_key, master_secret)
@@ -161,6 +162,7 @@ def accept_friend(request):
 			friend = Friend(user=target,nickname=src_user, avatar=src_user_info.avatar)
 			version_number = user_info.version_count + 1
 			friend.version_id = version_number
+			friend.group = 'friend'
 			friend.verify_status = 1
 			friend.save()
 
@@ -253,8 +255,7 @@ def search_friend(request):
 			data['status']=0
 			data['friends']= []
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-			
+
 		data['status']=55
 		data['error']='undefine error'
-		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')			
-
+		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
