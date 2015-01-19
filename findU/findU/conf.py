@@ -1,2 +1,2 @@
-app_key=u'03ad7d3fd09762fc3887283e'
-master_secret=u'73a3804d64c99222e3c344db'
+app_key=u'4ad2443bff927d40dec3e00b'
+master_secret=u'cc7adb3119d7cd81f905a809'
