@@ -41,7 +41,7 @@ def add_friend(request):
 			# TODO: fix verify status
 			src_user_info = UserInfo.objects.get(imsi = src_imsi)
 			src_user = User.objects.get(username = src_user_info.user.username)
-			wait_friend = Friend.objects.create(user = src_user, nickname=user_info.nickname)
+			wait_friend = Friend.objects.create(user = src_user, phone_mobile=check_user.username)
 			current_version = src_user_info.version_count + 1
 			wait_friend.verify_status = 2
 			wait_friend.group = 'unverified'
@@ -63,26 +63,6 @@ def add_friend(request):
 			push.send()
 			data['status']=0
 			data['server_friend_version'] = current_version
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-		except ObjectDoesNotExist:
-			data['status']=28
-			data['error']='user have not register'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-
-def get_remote_friend(request):
-	data = {}
-
-	if request.method == 'POST':
-		logger.debug(str(request.POST))
-
-		friend = request.POST.get('friend')
-
-		try:
-			friend_user = User.objects.get(username=friend)
-			friend_info = UserInfo.objects.get(user=friend_user)
-			data['status']=0
-			data['username']=friend
-			data['nickname']=friend_info.nickname
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
@@ -164,7 +144,9 @@ def accept_friend(request):
 			user_info = UserInfo.objects.get(user=target)
 			push_target = user_info.imsi
 
-			friend = Friend(user=target,nickname=src_user, avatar=src_user_info.avatar)
+			friend = Friend.objects.get(user=target,phone_mobile=src_user)
+			friend.avater = src_user_info.avatar
+			# get version count of target user
 			version_number = user_info.version_count + 1
 			friend.version_id = version_number
 			friend.group = 'friend'
@@ -205,13 +187,13 @@ def update_friend(request):
 			client_user = User.objects.get(username = client)
 			client_user_info = UserInfo.objects.get(user=client_user)
 			logger.debug("friend nickname is "+nick_name)
-			my_friend = Friend.objects.get(user=client_user,nickname=nick_name)
+			my_friend = Friend.objects.get(user=client_user,phone_mobile=mobile)
 
 			# set breakpoint to trace
 			#import pdb; pdb.set_trace()
 			# TODO: fix it
 			#my_friend.avatar.url = avatar_url
-			my_friend.phone_mobile = mobile
+			my_friend.nickname = nick_name
 			current_version = client_user_info.version_count + 1
 			my_friend.version_id = current_version
 			my_friend.save()
