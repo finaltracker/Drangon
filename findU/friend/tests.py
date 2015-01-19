@@ -32,7 +32,7 @@ class friendTests(TestCase):
 		json_data = {
 			"client": 'test1',
 			"imsi": 12345993,
-			"mobile_friend_version": 1,
+			"mobile_friend_version": 2,
 		}
 
 		response = self.client.post(reverse('friend:get_friend'), json_data)

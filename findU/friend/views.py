@@ -114,20 +114,23 @@ def get_friend(request):
 				client_friends = Friend.objects.all()
 
 			record_list = []
-			for friend in client_friends:
-				record = {}
-				record['group'] = smart_unicode(friend.group)
-				record['nickname'] = smart_unicode(friend.nickname)
-				#TODO: fix it
-				record['avatar'] = ""
-				record['mobile'] = smart_unicode(friend.phone_mobile)
-				record['verifystatus'] = friend.verify_status
+			if client_friends:
+				for friend in client_friends:
+					record = {}
+					record['group'] = smart_unicode(friend.group)
+					record['nickname'] = smart_unicode(friend.nickname)
+					#TODO: fix it
+					record['avatar'] = ""
+					record['mobile'] = smart_unicode(friend.phone_mobile)
+					record['verifystatus'] = friend.verify_status
 
-				logger.debug("record :"+str(record))
-				record_list.append(record)
+					logger.debug("record :"+str(record))
+					record_list.append(record)
+				data['server_friend_version']=current_version
+			else:
+				data['server_friend_version'] = -1
 
 			data['status']=0
-			data['server_friend_version']=current_version
 			data['friends']=record_list
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		except ObjectDoesNotExist:
