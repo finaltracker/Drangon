@@ -187,6 +187,7 @@ def update_friend(request):
 
 			# set breakpoint to trace
 			#import pdb; pdb.set_trace()
+			# TODO: fix it
 			#my_friend.avatar.url = avatar_url
 			my_friend.phone_mobile = mobile
 			current_version = client_user_info.version_count + 1
@@ -221,8 +222,10 @@ def search_friend(request):
 			for friend in result:
 				get_friend = UserInfo.objects.get(user=friend)
 				record = {}
-				# record['group'] = friend.group
+				#record['group'] = friend.group
+				record['group'] = ""
 				record['nickname'] = smart_unicode(get_friend.nickname)
+				# TODO: fix it
 				record['avatar'] = ""
 				record['mobile'] = smart_unicode(friend.username)
 
