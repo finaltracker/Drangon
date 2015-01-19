@@ -62,6 +62,7 @@ def add_friend(request):
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
+			data['server_friend_version'] = current_version
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
