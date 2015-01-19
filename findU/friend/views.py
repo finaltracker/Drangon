@@ -37,13 +37,19 @@ def add_friend(request):
 		try:
 			check_user = User.objects.get(username=target_user)
 			user_info = UserInfo.objects.get(user=check_user)
-			'''
+
 			# TODO: fix verify status
 			src_user_info = UserInfo.objects.get(imsi = src_imsi)
 			src_user = User.objects.get(username = src_user_info.user.username)
 			wait_friend = Friend.objects.create(user = src_user, nickname=user_info.nickname)
+			current_version = src_user_info.version_count + 1
 			wait_friend.verify_status = 2
-			'''
+			wait_friend.version_id = current_version
+			wait_friend.save()
+
+			src_user_info.version_count = current_version
+			src_user_info.save()
+			
 			push_target = user_info.imsi
 
 			_jpush = jpush.JPush(app_key, master_secret)
@@ -114,7 +120,7 @@ def get_friend(request):
 				#TODO: fix it
 				record['avatar'] = ""
 				record['mobile'] = smart_unicode(friend.phone_mobile)
-				record['verifystatus'] = 1
+				record['verifystatus'] = friend.verify_status
 
 				logger.debug("record :"+str(record))
 				record_list.append(record)
@@ -155,6 +161,7 @@ def accept_friend(request):
 			friend = Friend(user=target,nickname=src_user, avatar=src_user_info.avatar)
 			version_number = user_info.version_count + 1
 			friend.version_id = version_number
+			friend.verify_status = 1
 			friend.save()
 
 			user_info.version_count = version_number
