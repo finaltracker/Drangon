@@ -22,6 +22,7 @@ def add_friend(request):
 		logger.debug(str(request.POST))
 
 		src_imsi = request.POST.get('imsi')
+		logger.debug("src imsi : "+src_imsi)
 		try:
 			src_user_info = UserInfo.objects.get(imsi = src_imsi)
 			src_user = src_user_info.user.username
@@ -40,13 +41,16 @@ def add_friend(request):
 
 			# TODO: fix verify status
 			src_user_info = UserInfo.objects.get(imsi = src_imsi)
+			logger.debug("user name : "+src_user_info.user.username)
 			src_user = User.objects.get(username = src_user_info.user.username)
 				
-			check_friend = Friend.objects.get(user=src_user, phone_mobile=check_user.username)
-			if check_friend:
+			try:
+				check_friend = Friend.objects.get(user=src_user, phone_mobile=check_user.username)
+			
 				current_version = src_user_info.version_count
 				logger.debug("friend already add, skip it")
-			else:
+				
+			except ObjectDoesNotExist:
 				wait_friend = Friend.objects.create(user = src_user, phone_mobile=check_user.username)
 				current_version = src_user_info.version_count + 1
 				wait_friend.verify_status = 2
@@ -67,7 +71,7 @@ def add_friend(request):
 				push.message = jpush.message(msg_content=201, extras=str(src_user))
 				push.platform = jpush.all_
 				push.send()
-				
+
 			data['status']=0
 			data['server_friend_version'] = current_version
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
