@@ -41,26 +41,33 @@ def add_friend(request):
 			# TODO: fix verify status
 			src_user_info = UserInfo.objects.get(imsi = src_imsi)
 			src_user = User.objects.get(username = src_user_info.user.username)
-			wait_friend = Friend.objects.create(user = src_user, phone_mobile=check_user.username)
-			current_version = src_user_info.version_count + 1
-			wait_friend.verify_status = 2
-			wait_friend.group = 'unverified'
-			wait_friend.version_id = current_version
-			wait_friend.save()
+				
+			check_friend = Friend.objects.get(user=src_user, phone_mobile=check_user.username)
+			if check_friend:
+				current_version = src_user_info.version_count
+				logger.debug("friend already add, skip it")
+			else:
+				wait_friend = Friend.objects.create(user = src_user, phone_mobile=check_user.username)
+				current_version = src_user_info.version_count + 1
+				wait_friend.verify_status = 2
+				wait_friend.group = 'unverified'
+				wait_friend.version_id = current_version
+				wait_friend.save()
 
-			src_user_info.version_count = current_version
-			src_user_info.save()
+				src_user_info.version_count = current_version
+				src_user_info.save()
 
-			push_target = user_info.imsi
+				push_target = user_info.imsi
 
-			_jpush = jpush.JPush(app_key, master_secret)
-			push = _jpush.create_push()
-			push.audience = jpush.audience(
-				jpush.tag(push_target)
-			)
-			push.message = jpush.message(msg_content=201, extras=str(src_user))
-			push.platform = jpush.all_
-			push.send()
+				_jpush = jpush.JPush(app_key, master_secret)
+				push = _jpush.create_push()
+				push.audience = jpush.audience(
+					jpush.tag(push_target)
+				)
+				push.message = jpush.message(msg_content=201, extras=str(src_user))
+				push.platform = jpush.all_
+				push.send()
+				
 			data['status']=0
 			data['server_friend_version'] = current_version
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
