@@ -49,7 +49,7 @@ def add_friend(request):
 			
 				current_version = src_user_info.version_count
 				logger.debug("friend already add, skip it")
-				
+
 			except ObjectDoesNotExist:
 				wait_friend = Friend.objects.create(user = src_user, phone_mobile=check_user.username)
 				current_version = src_user_info.version_count + 1
@@ -113,7 +113,7 @@ def get_friend(request):
 					record['group'] = smart_unicode(friend.group)
 					record['nickname'] = smart_unicode(friend.nickname)
 					#TODO: fix it
-					record['avatar'] = ""
+					record['avatar_url'] = ""
 					record['mobile'] = smart_unicode(friend.phone_mobile)
 					record['verifystatus'] = friend.verify_status
 
@@ -241,7 +241,7 @@ def search_friend(request):
 				record['group'] = ""
 				record['nickname'] = smart_unicode(get_friend.nickname)
 				# TODO: fix it
-				record['avatar'] = ""
+				record['avatar_url'] = ""
 				record['mobile'] = smart_unicode(friend.username)
 
 				record_list.append(record)
