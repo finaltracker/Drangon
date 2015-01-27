@@ -220,6 +220,36 @@ def update_friend(request):
 			data['error']='user have not register'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
+def delete_friend(request):
+	data = {}
+
+	if request.method == 'POST':
+		logger.debug(str(request.POST))
+
+		client = request.POST.get('client')
+		mobile = request.POST.get('mobile')
+
+		try:
+			client_user = User.objects.get(username = client)
+			client_user_info = UserInfo.objects.get(user=client_user)
+			logger.debug("friend nickname is "+nick_name)
+			my_friend = Friend.objects.get(user=client_user,phone_mobile=mobile)
+
+			current_version = client_user_info.version_count + 1
+			
+			my_friend.delete()
+
+			client_user_info.version_count = current_version
+			client_user_info.save()
+
+			data['status']=0
+			data['server_friend_version']=current_version
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+		except ObjectDoesNotExist:
+			data['status']=28
+			data['error']='user have not register'
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+
 def search_friend(request):
 	data = {}
 
