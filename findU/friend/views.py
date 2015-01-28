@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -54,7 +56,7 @@ def add_friend(request):
 				wait_friend = Friend.objects.create(user = src_user, phone_mobile=check_user.username)
 				current_version = src_user_info.version_count + 1
 				wait_friend.verify_status = 2
-				wait_friend.group = '待验证好友'
+				wait_friend.group = u"待验证好友"
 				wait_friend.version_id = current_version
 				wait_friend.save()
 
