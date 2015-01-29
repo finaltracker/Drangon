@@ -33,7 +33,7 @@ def add_friend(request):
 			data['error']='user do not exist'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-		add_friend = request.POST.get('add friend')
+		add_friend = request.POST.get('friend_mobile')
 		# comment: for identify who that add
 		# comment = request.POST.get('comment')
 
@@ -85,7 +85,7 @@ def get_friend(request):
 
 		mobile = request.POST.get('mobile')
 		logger.debug("src mobile : "+mobile)
-		mobile_friend_version = request.POST.get('mobile_friend_version')
+		mobile_friend_version = request.POST.get('local_friend_version')
 
 		client_friends = []
 		try:
@@ -111,7 +111,7 @@ def get_friend(request):
 					record['nickname'] = smart_unicode(friend.nickname)
 					#TODO: fix it
 					record['avatar_url'] = ""
-					record['mobile'] = smart_unicode(friend.phone_mobile)
+					record['mobile'] = smart_unicode(friend.phone)
 					record['verifystatus'] = friend.verify_status
 
 					logger.debug("record :"+str(record))
@@ -146,7 +146,7 @@ def accept_friend(request):
 			data['error']='sender user do not exist'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-		to_friend = request.POST.get('to friend')
+		to_friend = request.POST.get('friend_mobile')
 
 		try:
 			to_client = User.objects.get(username=to_friend)
@@ -199,7 +199,7 @@ def update_friend(request):
 		try:
 			client = User.objects.get(username = mobile)
 			user_info = UserInfo.objects.get(user = client)
-			update_friend = request.POST.get('update friend')
+			update_friend = request.POST.get('friend_mobile')
 
 			my_friend = Friend.objects.get(user=client,phone=update_friend)
 
@@ -237,7 +237,7 @@ def delete_friend(request):
 			client = User.objects.get(username = mobile)
 			user_info = UserInfo.objects.get(user = client)
 
-			delete_friend = request.POST.get('delete friend')
+			delete_friend = request.POST.get('friend_mobile')
 			my_friend = Friend.objects.get(user=client,phone=delete_friend)
 
 			current_version = user_info.version_count + 1
