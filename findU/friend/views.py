@@ -23,54 +23,49 @@ def add_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
-		src_imsi = request.POST.get('imsi')
-		logger.debug("src imsi : "+src_imsi)
+		mobile = request.POST.get('mobile')
+		logger.debug("src mobile : "+mobile)
 		try:
-			src_user_info = UserInfo.objects.get(imsi = src_imsi)
-			src_user = src_user_info.user.username
+			client = User.objects.get(username=mobile)
+			user_info = UserInfo.objects.get(user = client)
 		except ObjectDoesNotExist:
 			data['status']=34
 			data['error']='user do not exist'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-		target_user=request.POST.get('target_user')
+		add_friend = request.POST.get('add friend')
 		# comment: for identify who that add
 		# comment = request.POST.get('comment')
 
 		try:
-			check_user = User.objects.get(username=target_user)
-			user_info = UserInfo.objects.get(user=check_user)
-
-			# TODO: fix verify status
-			src_user_info = UserInfo.objects.get(imsi = src_imsi)
-			logger.debug("user name : "+src_user_info.user.username)
-			src_user = User.objects.get(username = src_user_info.user.username)
+			add_client = User.objects.get(username=add_friend)
+			add_client_info = UserInfo.objects.get(user=add_client)
 				
 			try:
-				check_friend = Friend.objects.get(user=src_user, phone_mobile=check_user.username)
+				check_friend = Friend.objects.get(user=client, phone=add_friend)
 			
-				current_version = src_user_info.version_count
+				current_version = user_info.version_count
 				logger.debug("friend already add, skip it")
 
 			except ObjectDoesNotExist:
-				wait_friend = Friend.objects.create(user = src_user, phone_mobile=check_user.username)
-				current_version = src_user_info.version_count + 1
+				wait_friend = Friend.objects.create(user = client, phone=add_friend)
+				current_version = user_info.version_count + 1
 				wait_friend.verify_status = 2
 				wait_friend.group = u"待验证好友"
 				wait_friend.version_id = current_version
 				wait_friend.save()
 
-				src_user_info.version_count = current_version
-				src_user_info.save()
+				user_info.version_count = current_version
+				user_info.save()
 
-				push_target = user_info.imsi
+				push_target = add_client_info.imsi
 
 				_jpush = jpush.JPush(app_key, master_secret)
 				push = _jpush.create_push()
 				push.audience = jpush.audience(
 					jpush.tag(push_target)
 				)
-				push.message = jpush.message(msg_content=201, extras=str(src_user))
+				push.message = jpush.message(msg_content=201, extras=str(mobile))
 				push.platform = jpush.all_
 				push.send()
 
@@ -88,25 +83,25 @@ def get_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
-		client = request.POST.get('client')
-		client_imsi = request.POST.get('imsi')
+		mobile = request.POST.get('mobile')
+		logger.debug("src mobile : "+mobile)
 		mobile_friend_version = request.POST.get('mobile_friend_version')
 
 		client_friends = []
 		try:
-			#client_user = User.objects.get(username=client)
-			client_info = UserInfo.objects.get(imsi=client_imsi)
-			client_user = client_info.user
-			current_version = client_info.version_count
+			client = User.objects.get(username=mobile)
+			user_info = UserInfo.objects.get(user=client)
+
+			current_version = user_info.version_count
 			if(current_version-int(mobile_friend_version) == 0):
 				logger.debug("something goes wrong!!")
 
 			if(current_version-int(mobile_friend_version) < 2):
 				data["update_type"]=2
-				client_friends = Friend.objects.filter(user=client_user).filter(version_id__gt=mobile_friend_version)
+				client_friends = Friend.objects.filter(user=client).filter(version_id__gt=mobile_friend_version)
 			else:
 				data['update_type']=1
-				client_friends = Friend.objects.filter(user=client_user)
+				client_friends = Friend.objects.filter(user=client)
 
 			record_list = []
 			if client_friends:
@@ -139,30 +134,32 @@ def accept_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
-		client = request.POST.get('client')
+		mobile = request.POST.get('mobile')
+		logger.debug("src mobile : "+mobile)
 		nok = request.POST.get('nok')
-		src_imsi = request.POST.get('imsi')
+		
 		try:
-			src_user_info = UserInfo.objects.get(imsi = src_imsi)
-			src_user = src_user_info.user.username
+			client = User.objects.get(username=mobile)
+			user_info = UserInfo.objects.get(user = client)
 		except ObjectDoesNotExist:
 			data['status']=34
 			data['error']='sender user do not exist'
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-		target_user=request.POST.get('target_user')
+		to_friend = request.POST.get('to friend')
 
 		try:
-			target = User.objects.get(username=target_user)
-			user_info = UserInfo.objects.get(user=target)
-			push_target = user_info.imsi
+			to_client = User.objects.get(username=to_friend)
+			to_client_info = UserInfo.objects.get(user=to_client)
+			
 
-			friend = Friend.objects.get(user=target,phone_mobile=src_user)
-			friend.avater = src_user_info.avatar
+			friend = Friend.objects.get(user=client,phone=to_friend)
+			friend.avater = to_client_info.avatar
 			# get version count of target user
 			version_number = user_info.version_count + 1
 			friend.version_id = version_number
-			friend.group = 'friend'
+			friend.nickname = to_client_info.nickname
+			friend.group = u'我的好友'
 			friend.verify_status = 1
 			friend.save()
 
@@ -170,6 +167,8 @@ def accept_friend(request):
 			user_info.save()
 
 			_jpush = jpush.JPush(app_key, master_secret)
+
+			push_target = to_client_info.imsi
 			push = _jpush.create_push()
 			push.audience = jpush.audience(
 				jpush.tag(push_target)
@@ -191,28 +190,31 @@ def update_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
-		client = request.POST.get('client')
-		nick_name = request.POST.get('nick_name')
-		avatar_url = request.POST.get('avatar_url')
 		mobile = request.POST.get('mobile')
+		logger.debug("src mobile : "+mobile)
+		comment = request.POST.get('comment')
+		group = request.POST.get('group')
+		description = request.POST.get('description')
 
 		try:
-			client_user = User.objects.get(username = client)
-			client_user_info = UserInfo.objects.get(user=client_user)
-			logger.debug("friend nickname is "+nick_name)
-			my_friend = Friend.objects.get(user=client_user,phone_mobile=mobile)
+			client = User.objects.get(username = mobile)
+			user_info = UserInfo.objects.get(user = client)
+			update_friend = request.POST.get('update friend')
+
+			my_friend = Friend.objects.get(user=client,phone=update_friend)
 
 			# set breakpoint to trace
 			#import pdb; pdb.set_trace()
-			# TODO: fix it
-			#my_friend.avatar.url = avatar_url
-			my_friend.nickname = nick_name
-			current_version = client_user_info.version_count + 1
+		
+			my_friend.group = group
+			my_friend.comment = comment
+			my_friend.reserved = description
+			current_version = user_info.version_count + 1
 			my_friend.version_id = current_version
 			my_friend.save()
 
-			client_user_info.version_count = current_version
-			client_user_info.save()
+			user_info.version_count = current_version
+			user_info.save()
 
 			data['status']=0
 			data['server_friend_version']=current_version
@@ -228,21 +230,22 @@ def delete_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
-		client = request.POST.get('client')
 		mobile = request.POST.get('mobile')
+		logger.debug("src mobile : "+mobile)
 
 		try:
-			client_user = User.objects.get(username = client)
-			client_user_info = UserInfo.objects.get(user=client_user)
-			logger.debug("friend nickname is "+nick_name)
-			my_friend = Friend.objects.get(user=client_user,phone_mobile=mobile)
+			client = User.objects.get(username = mobile)
+			user_info = UserInfo.objects.get(user = client)
 
-			current_version = client_user_info.version_count + 1
+			delete_friend = request.POST.get('delete friend')
+			my_friend = Friend.objects.get(user=client,phone=delete_friend)
+
+			current_version = user_info.version_count + 1
 			
 			my_friend.delete()
 
-			client_user_info.version_count = current_version
-			client_user_info.save()
+			user_info.version_count = current_version
+			user_info.save()
 
 			data['status']=0
 			data['server_friend_version']=current_version
@@ -258,11 +261,12 @@ def search_friend(request):
 	if request.method == 'POST':
 		logger.debug(str(request.POST))
 
-		client = request.POST.get('client')
+		mobile = request.POST.get('mobile')
+		logger.debug("src mobile : "+mobile)
 		search_friend = request.POST.get('search_str')
 
 		try:
-			client_user = User.objects.get(username = client)
+			client = User.objects.get(username = mobile)
 			result = User.objects.filter(username=search_friend)
 
 			record_list = []

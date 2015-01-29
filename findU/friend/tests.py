@@ -17,8 +17,8 @@ class friendTests(TestCase):
 
 	def test_add_friend(self):
 		json_data = {
-			'imsi': 12345993,
-			"target_user": 13636630387,
+			'mobile': 12345993,
+			"add friend": 13636630387,
 		}
 
 		response = self.client.post(reverse('friend:add_friend'), json_data)
@@ -30,8 +30,7 @@ class friendTests(TestCase):
 		self.prepare_data()
 
 		json_data = {
-			"client": 'test1',
-			"imsi": 12345993,
+			"mobile": 12345993,
 			"mobile_friend_version": 2,
 		}
 
@@ -41,9 +40,9 @@ class friendTests(TestCase):
 
 	def test_accept_friend(self):
 		json_data = {
+			"mobile": 12345993,
 			"nok": 1,
-			'imsi': 12345993,
-			"target_user": 13636630387,
+			"to friend": 13636630387,
 		}
 
 		response = self.client.post(reverse('friend:accept_friend'), json_data)
@@ -55,10 +54,11 @@ class friendTests(TestCase):
 		self.prepare_data()
 
 		json_data = {
-			"client": 'test1',
-			"nick_name": 'cat',
-			"avatar_url": 'cat_pic',
-			"mobile": 13636630387,
+			"mobile": 12345993,
+			"update friend": 13636630387,
+			"comment": 'penut',
+			"group": 'cat_pic',
+			"description": 'cross finger',
 		}
 
 		response = self.client.post(reverse('friend:update_friend'), json_data)
@@ -70,8 +70,8 @@ class friendTests(TestCase):
 		self.prepare_data()
 
 		json_data = {
-			"client": 'test1',
-			"search_str": 'cat',
+			"mobile": 12345993,
+			"search_str": 13636630387,
 		}
 
 		response = self.client.post(reverse('friend:search_friend'), json_data)
@@ -79,11 +79,11 @@ class friendTests(TestCase):
 		self.assertEqual(response.content, "ok")		
 
 	def prepare_data(self):
-		test1 = User.objects.create(username='test1')
+		test1 = User.objects.create(username='12345993')
 		dog = UserInfo.objects.create(user=test1,nickname='dog')
-		cat = Friend.objects.create(user=test1,nickname='cat',version_id=1)
+		cat = Friend.objects.create(user=test1,phone='13636630387', nickname='cat',version_id=1)
 		dog.version_count  = 1
 		dog.save()
-		cow = Friend.objects.create(user=test1, nickname='cow',version_id=2)
+		cow = Friend.objects.create(user=test1, phone='13636630388', nickname='cow',version_id=2)
 		dog.version_count = 2
 		dog.save()
