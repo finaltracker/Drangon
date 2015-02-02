@@ -25,6 +25,7 @@ def register_mobile(request):
 			password=request.POST.get('password')
 			confirmpass=request.POST.get('confirmpass')
 			own_imsi=request.POST.get('imsi')
+			nick_name=request.POST.get('nick_name')
 		except KeyError:
 			data['status']=14
 			data['error']='missing items'
@@ -54,6 +55,7 @@ def register_mobile(request):
 				user=User.objects.get(username=user_name)
 				userinfo=UserInfo(user=user)
 				userinfo.imsi = own_imsi
+				userinfo.nickname = nick_name
 				userinfo.save()
 				data['status']=0
 				return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
