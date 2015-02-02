@@ -10,7 +10,7 @@ class Friend(models.Model):
 	avatar=models.ImageField(upload_to='avatar')
 	verify_status = models.IntegerField(default=0)
 	version_id = models.IntegerField(default=0)
-	reserved=models.CharField(max_length=140)
+	reserved=models.CharField(max_length=140, null=True)
 
 	def __str__(self):
 		return self.phone_mobile
