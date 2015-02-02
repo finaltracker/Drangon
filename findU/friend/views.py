@@ -173,7 +173,7 @@ def accept_friend(request):
 			push.audience = jpush.audience(
 				jpush.tag(push_target)
 			)
-			push.message = jpush.message(msg_content=202, extras=str(src_user))
+			push.message = jpush.message(msg_content=202, extras=str(mobile))
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
