@@ -48,15 +48,15 @@ def add_friend(request):
 				logger.debug("friend already add, skip it")
 
 			except ObjectDoesNotExist:
-				wait_friend = Friend.objects.create(user = client, phone=add_friend)
-				current_version = user_info.version_count + 1
+				wait_friend = Friend.objects.create(user = add_client, phone=mobile)
+				current_version = add_client_info.version_count + 1
 				wait_friend.verify_status = 2
 				wait_friend.group = u"待验证好友"
 				wait_friend.version_id = current_version
 				wait_friend.save()
 
-				user_info.version_count = current_version
-				user_info.save()
+				add_client_info.version_count = current_version
+				add_client_info.save()
 
 				push_target = add_client_info.imsi
 
@@ -65,7 +65,7 @@ def add_friend(request):
 				push.audience = jpush.audience(
 					jpush.tag(push_target)
 				)
-				push.message = jpush.message(msg_content=201, extras=str(mobile))
+				push.message = jpush.message(msg_content=202, extras=str(mobile))
 				push.platform = jpush.all_
 				push.send()
 
@@ -152,9 +152,14 @@ def accept_friend(request):
 			to_client = User.objects.get(username=to_friend)
 			to_client_info = UserInfo.objects.get(user=to_client)
 			
+			done_friend = Friend.objects.get(user=to_client,phone=mobile)
+			current_version = to_client_info.version_count+1
+			done_friend.delete()
+			to_client_info.version_count = current_version
+			to_client_info.save()
 
 			friend = Friend.objects.get(user=client,phone=to_friend)
-			friend.avater = to_client_info.avatar
+			friend.avatar = to_client_info.avatar
 			# get version count of target user
 			version_number = user_info.version_count + 1
 			friend.version_id = version_number
@@ -162,6 +167,8 @@ def accept_friend(request):
 			friend.group = u'我的好友'
 			friend.verify_status = 1
 			friend.save()
+
+
 
 			user_info.version_count = version_number
 			user_info.save()
@@ -177,7 +184,7 @@ def accept_friend(request):
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
-			data['server_friend_version']=version_number
+			data['server_friend_version']=current_version
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
