@@ -152,23 +152,21 @@ def accept_friend(request):
 			to_client = User.objects.get(username=to_friend)
 			to_client_info = UserInfo.objects.get(user=to_client)
 			
-			done_friend = Friend.objects.get(user=to_client,phone=mobile)
+			done_friend = Friend.objects.create(user=to_client,phone=mobile)
 			current_version = to_client_info.version_count+1
-			done_friend.delete()
+			done_friend.avatar = user_info.avatar
+			done_friend.version_id = current_version
+			done_friend.nickname = user_info.nickname
+			done_friend.group = u'我的好友'
+			done_friend.verify_status = 1
+			done_friend.save()
+
 			to_client_info.version_count = current_version
 			to_client_info.save()
 
 			friend = Friend.objects.get(user=client,phone=to_friend)
-			friend.avatar = to_client_info.avatar
-			# get version count of target user
 			version_number = user_info.version_count + 1
-			friend.version_id = version_number
-			friend.nickname = to_client_info.nickname
-			friend.group = u'我的好友'
-			friend.verify_status = 1
-			friend.save()
-
-
+			friend.delete()
 
 			user_info.version_count = version_number
 			user_info.save()
@@ -184,7 +182,7 @@ def accept_friend(request):
 			push.platform = jpush.all_
 			push.send()
 			data['status']=0
-			data['server_friend_version']=current_version
+			data['server_friend_version']=version_number
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
