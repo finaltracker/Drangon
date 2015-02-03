@@ -42,7 +42,7 @@ def add_friend(request):
 			add_client_info = UserInfo.objects.get(user=add_client)
 				
 			try:
-				check_friend = Friend.objects.get(user=client, phone=add_friend)
+				check_friend = Friend.objects.get(user=add_client, phone=mobile)
 			
 				current_version = user_info.version_count
 				logger.debug("friend already add, skip it")
