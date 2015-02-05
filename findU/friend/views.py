@@ -151,7 +151,13 @@ def accept_friend(request):
 		try:
 			to_client = User.objects.get(username=to_friend)
 			to_client_info = UserInfo.objects.get(user=to_client)
-			
+
+			friend = Friend.objects.get(user=client,phone=to_friend)
+			version_number = user_info.version_count + 1
+			friend.delete()
+			user_info.version_count = version_number
+			user_info.save()
+
 			done_friend = Friend.objects.create(user=to_client,phone=mobile)
 			current_version = to_client_info.version_count+1
 			done_friend.avatar = user_info.avatar
@@ -160,16 +166,8 @@ def accept_friend(request):
 			done_friend.group = u'我的好友'
 			done_friend.verify_status = 1
 			done_friend.save()
-
 			to_client_info.version_count = current_version
 			to_client_info.save()
-
-			friend = Friend.objects.get(user=client,phone=to_friend)
-			version_number = user_info.version_count + 1
-			friend.delete()
-
-			user_info.version_count = version_number
-			user_info.save()
 
 			_jpush = jpush.JPush(app_key, master_secret)
 
