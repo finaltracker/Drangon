@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.utils.encoding import smart_unicode
 import json
 import jpush as jpush
-import logging
 from findU.conf import app_key, master_secret
 import logging
 logger = logging.getLogger(__name__)
