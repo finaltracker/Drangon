@@ -38,8 +38,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'user',
     'friend',
+    'tips',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -109,6 +111,10 @@ LOGGING = {
         'friend': {
             'handlers': ['file'],
             'level': 'DEBUG'
-        },              
+        },  
+        'tips': {
+            'handlers': ['file'],
+            'level': 'DEBUG'
+        },                       
     },
 }

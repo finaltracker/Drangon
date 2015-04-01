@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^user/',include('user.urls',namespace='user')),
     url(r'^feed/',include('feed.urls',namespace='feed')),
     url(r'^friend/',include('friend.urls',namespace='friend')),
+    url(r'^tips/',include('tips.urls',namespace='tips')),
 )
