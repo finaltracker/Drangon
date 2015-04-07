@@ -93,7 +93,7 @@ def get_tip(request):
 
 		data['status']=0
 		data['mobile']=tip.user.username
-		data['friend_moible']=tip.receiver.username
+		data['friend_moible']=tip.receiver
 		data['message']=tip.message
 		data['create_time']=tip.create_time
 		data['audio_url']=tip.audio
