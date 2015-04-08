@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from user.models import UserInfo
+from tips.models import Tip
 from django.core.exceptions import ObjectDoesNotExist
 import json
 import jpush as jpush
@@ -35,7 +36,7 @@ def send_tip(request):
 		audio_url=request.POST.get('audio_url')
 		photo_url=request.POST.get('photo_url')
 
-		tip = Tip(user=mobile)
+		tip = Tip(user=client)
 		tip.receiver = friend
 		tip.message = content
 		tip.create_time = create_time
@@ -73,9 +74,10 @@ def get_tip(request):
 		mobile=request.POST.get('mobile')
 		friend=request.POST.get('friend_mobile')
 		mesg_id=request.POST.get('mesg_id')
+		logger.debug("friend:" + str(friend))
 
 		try:
-			client = User.objects.get(username=mobile)
+			#client = User.objects.get(username=mobile)
 			to_friend = User.objects.get(username=friend)
 		except ObjectDoesNotExist:
 			logger.debug("user or friend do not exist!")
