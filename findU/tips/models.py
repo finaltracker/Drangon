@@ -9,6 +9,6 @@ class Tip(models.Model):
 	photo = models.CharField(max_length=200)
 	audio = models.CharField(max_length=200)
 
-	def __str__(self):
+	def __unicode__(self):
 		return self.message
 

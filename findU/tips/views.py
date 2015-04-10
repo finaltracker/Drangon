@@ -75,6 +75,8 @@ def get_tip(request):
 		friend=request.POST.get('friend_mobile')
 		mesg_id=request.POST.get('mesg_id')
 		logger.debug("friend:" + str(friend))
+		logger.debug("mobile:" + str(mobile))
+		logger.debug("message id:" + str(mesg_id))
 
 		try:
 			#client = User.objects.get(username=mobile)

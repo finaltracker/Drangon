@@ -13,4 +13,4 @@ class Friend(models.Model):
 	reserved=models.CharField(max_length=140, null=True)
 
 	def __str__(self):
-		return self.phone_mobile
+		return self.phone
