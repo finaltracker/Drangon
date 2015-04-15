@@ -9,6 +9,8 @@ from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from user.models import UserInfo
+from user.forms import UploadFileForm
+from django.conf import settings
 from django.core.urlresolvers import reverse
 import logging
 
@@ -109,23 +111,37 @@ def check_register(request):
 	data['status']=400
 	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-	
 
-"""
-def autousername():
-	# time=timezone.now().timestamp()
-	timestamp=time.time()
-	username='u'+str(timestamp)
-	return username
+def upload_avatar(request):
+	#get image from client
+	#save image to media folder
+	if request.method == "POST":
+		form = UploadFileForm(request.POST, request.FILES)
+		logger.debug("[photo]request POST form: "+ str(request.POST))
+		if form.is_valid() and form.is_multipart():
+			logger.debug("[photo]upload image: "+str(request.FILES))
+			save_file(request.FILES['image'])
+			return HttpResponse(200)
+		else:
+			return HttpResponse('invalid image')
 
-def finalusername():
-	while 1:
-		user_name=autousername()
-		logger.debug(str(user_name))
-		try:
-			User.objects.get(username = user_name)
-		except ObjectDoesNotExist:
-			break
+def save_file(file, path=''):
 
-	return user_name
-"""	
+	filename = file._get_name()
+	logger.debug("[photo]save image: "+filename)
+
+	fd = open('%s/%s' % (settings.MEDIA_ROOT , str(path)+str(filename)), 'wb')
+	for chunk in file.chunks():
+		fd.write(chunk)
+	fd.close()
+
+def download_avatar(request):
+	image_name = request.POST.get('avatar_id')
+    """
+    Processes request to view photo.
+    It just returns the raw image itself.
+    """
+    logger.debug("image name : "+str(image_name))
+    if(image_name != None):
+		image_data = open('%s/%s' % (settings.MEDIA_ROOT , str(image_name)), "rb").read()
+		return HttpResponse(image_data, content_type="image/png")	
