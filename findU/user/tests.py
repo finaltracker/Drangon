@@ -13,6 +13,7 @@ class userTests(TestCase):
 			"password": "123456",
 			"confirmpass": "123456",
 			'imsi': 12345993,
+			'nick_name': "test"
 		}
 	
 		response = self.client.post(reverse('user:register'), json_data)
