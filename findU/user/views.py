@@ -137,11 +137,7 @@ def save_file(file, path=''):
 
 def download_avatar(request):
 	image_name = request.POST.get('avatar_id')
-    """
-    Processes request to view photo.
-    It just returns the raw image itself.
-    """
-    logger.debug("image name : "+str(image_name))
-    if(image_name != None):
+	logger.debug("image name : "+str(image_name))
+    	if(image_name != None):
 		image_data = open('%s/%s' % (settings.MEDIA_ROOT , str(image_name)), "rb").read()
-		return HttpResponse(image_data, content_type="image/png")	
+	return HttpResponse(image_data, content_type="image/png")	
