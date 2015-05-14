@@ -9,9 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 import time
 from django.utils import timezone
 from django.utils.encoding import smart_unicode
-import json
-import jpush as jpush
-from findU.conf import app_key, master_secret
+from utils.json import toJSON
+from utils.jpush import jpush_send_message
 import logging
 logger = logging.getLogger(__name__)
 
@@ -30,7 +29,7 @@ def add_friend(request):
 		except ObjectDoesNotExist:
 			data['status']=34
 			data['error']='user do not exist'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 		add_friend = request.POST.get('friend_mobile')
 		# comment: for identify who that add
@@ -58,23 +57,16 @@ def add_friend(request):
 				add_client_info.save()
 
 				push_target = add_client_info.imsi
-
-				_jpush = jpush.JPush(app_key, master_secret)
-				push = _jpush.create_push()
-				push.audience = jpush.audience(
-					jpush.tag(push_target)
-				)
-				push.message = jpush.message(msg_content=202, extras=str(mobile))
-				push.platform = jpush.all_
-				push.send()
+				
+				jpush_send_message(str(mobile),push_target, 202)
 
 			data['status']=0
 			data['server_friend_version'] = current_version
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
 			data['error']='user have not register'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 def get_friend(request):
 	data = {}
@@ -121,11 +113,11 @@ def get_friend(request):
 
 			data['status']=0
 			data['friends']=record_list
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
 			data['error']='user have not register'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 def accept_friend(request):
 	data = {}
@@ -143,7 +135,7 @@ def accept_friend(request):
 		except ObjectDoesNotExist:
 			data['status']=34
 			data['error']='sender user do not exist'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 		to_friend = request.POST.get('friend_mobile')
 
@@ -168,23 +160,15 @@ def accept_friend(request):
 			to_client_info.version_count = current_version
 			to_client_info.save()
 
-			_jpush = jpush.JPush(app_key, master_secret)
+			jpush_send_message(str(mobile),push_target, 202)
 
-			push_target = to_client_info.imsi
-			push = _jpush.create_push()
-			push.audience = jpush.audience(
-				jpush.tag(push_target)
-			)
-			push.message = jpush.message(msg_content=202, extras=str(mobile))
-			push.platform = jpush.all_
-			push.send()
 			data['status']=0
 			data['server_friend_version']=version_number
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
 			data['error']='user have not register'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 def update_friend(request):
 	data = {}
@@ -220,11 +204,11 @@ def update_friend(request):
 
 			data['status']=0
 			data['server_friend_version']=current_version
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
 			data['error']='user have not register'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 def delete_friend(request):
 	data = {}
@@ -251,11 +235,11 @@ def delete_friend(request):
 
 			data['status']=0
 			data['server_friend_version']=current_version
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=28
 			data['error']='user have not register'
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 def search_friend(request):
 	data = {}
@@ -286,12 +270,12 @@ def search_friend(request):
 
 			data['status'] = 0
 			data['friends'] = record_list
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 		except ObjectDoesNotExist:
 			data['status']=0
 			data['friends']= []
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 		data['status']=55
 		data['error']='undefine error'
-		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+		return HttpResponse(toJSON(data),content_type='application/json')
