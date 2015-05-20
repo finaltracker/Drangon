@@ -92,10 +92,8 @@ class friendTests(TestCase):
 
 	def prepare_data(self):
 		test1 = User.objects.get(username='12345993')
+		test2 = User.objects.get(username='13636630387')
 		dog = UserInfo.objects.get(user=test1)
-		cat = Friend.objects.create(user=test1,phone='13636630387', nickname='cat',version_id=1)
+		cat = Friend.objects.create(user=test1,friend=test2, nickname='cat',version_id=1)
 		dog.version_count  = 1
-		dog.save()
-		cow = Friend.objects.create(user=test1, phone='13636630388', nickname='cow',version_id=2)
-		dog.version_count = 2
 		dog.save()

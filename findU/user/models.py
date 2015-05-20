@@ -14,9 +14,8 @@ class UserInfo(models.Model):
 	version_count = models.IntegerField(default=0)
 	reserved=models.CharField(max_length=140)
 
-    def avatar_url(self):
-
-        if self.avatar and hasattr(self.avatar, 'url'):
-            return self.avatar.url
-        else:
-            return 'default'
+	def avatar_url(self):
+		if self.avatar and hasattr(self.avatar, 'url'):
+			return self.avatar.url
+		else:
+			return 'default'

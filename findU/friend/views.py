@@ -9,8 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 import time
 from django.utils import timezone
 from django.utils.encoding import smart_unicode
-from utils.json import toJSON
-from utils.jpush import jpush_send_message
+from utils.pack_json import toJSON
+from utils.pack_jpush import jpush_send_message
 import logging
 logger = logging.getLogger(__name__)
 
@@ -40,13 +40,13 @@ def add_friend(request):
 			add_client_info = UserInfo.objects.get(user=add_client)
 				
 			try:
-				check_friend = Friend.objects.get(user=add_client, phone=mobile)
+				check_friend = Friend.objects.get(user=add_client, friend=client)
 			
 				current_version = user_info.version_count
 				logger.debug("friend already add, skip it")
 
 			except ObjectDoesNotExist:
-				wait_friend = Friend.objects.create(user = add_client, phone=mobile)
+				wait_friend = Friend.objects.create(user=add_client, friend=client)
 				current_version = add_client_info.version_count + 1
 				wait_friend.verify_status = 2
 				wait_friend.group = u"待验证好友"
@@ -98,11 +98,12 @@ def get_friend(request):
 			if client_friends:
 				for friend in client_friends:
 					record = {}
+					friend_userinfo = UserInfo.objects.get(user=friend)
 					record['group'] = smart_unicode(friend.group)
 					record['nickname'] = smart_unicode(friend.nickname)
 					#TODO: fix it
-					record['avatar_url'] = ""
-					record['mobile'] = smart_unicode(friend.phone)
+					record['avatar_url'] = friend_userinfo.avatar_url()
+					record['mobile'] = smart_unicode(friend.freind.username)
 					record['verifystatus'] = friend.verify_status
 
 					logger.debug("record :"+str(record))
@@ -143,15 +144,14 @@ def accept_friend(request):
 			to_client = User.objects.get(username=to_friend)
 			to_client_info = UserInfo.objects.get(user=to_client)
 
-			friend = Friend.objects.get(user=client,phone=to_friend)
+			friend = Friend.objects.get(user=client,friend=to_client)
 			version_number = user_info.version_count + 1
 			friend.delete()
 			user_info.version_count = version_number
 			user_info.save()
 
-			done_friend = Friend.objects.create(user=to_client,phone=mobile)
+			done_friend = Friend.objects.create(user=to_client,friend=to_client)
 			current_version = to_client_info.version_count+1
-			done_friend.avatar = user_info.avatar
 			done_friend.version_id = current_version
 			done_friend.nickname = user_info.nickname
 			done_friend.group = u'我的好友'
@@ -186,8 +186,9 @@ def update_friend(request):
 			client = User.objects.get(username = mobile)
 			user_info = UserInfo.objects.get(user = client)
 			update_friend = request.POST.get('friend_mobile')
+			update_client = User.objects.get(username = update_friend)
 
-			my_friend = Friend.objects.get(user=client,phone=update_friend)
+			my_friend = Friend.objects.get(user=client,friend=update_client)
 
 			# set breakpoint to trace
 			#import pdb; pdb.set_trace()
@@ -224,7 +225,8 @@ def delete_friend(request):
 			user_info = UserInfo.objects.get(user = client)
 
 			delete_friend = request.POST.get('friend_mobile')
-			my_friend = Friend.objects.get(user=client,phone=delete_friend)
+			delete_client = User.objects.get(username = delete_friend)
+			my_friend = Friend.objects.get(user=client,friend=delete_client)
 
 			current_version = user_info.version_count + 1
 			
@@ -263,7 +265,7 @@ def search_friend(request):
 				record['group'] = ""
 				record['nickname'] = smart_unicode(get_friend.nickname)
 				# TODO: fix it
-				record['avatar_url'] = ""
+				record['avatar_url'] = get_friend.avatar_url()
 				record['mobile'] = smart_unicode(friend.username)
 
 				record_list.append(record)
