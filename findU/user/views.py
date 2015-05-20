@@ -113,15 +113,23 @@ def check_register(request):
 
 
 def upload_avatar(request):
+	data={}
 	#get image from client
 	#save image to media folder
 	if request.method == "POST":
+		user_name = request.POST.get('mobile')
+		client = User.objects.get(username=user_name)
+		user_info = UserInfo.objects.get(user=client)
 		form = UploadFileForm(request.POST, request.FILES)
 		logger.debug("[photo]request POST form: "+ str(request.POST))
 		if form.is_valid() and form.is_multipart():
 			logger.debug("[photo]upload image: "+str(request.FILES))
 			save_file(request.FILES['image'])
-			return HttpResponse(200)
+			user_info.avatar.save(request.FILES['image'].name, request.FILES['image'])
+			user_info.save()
+			data['status'] = 0
+			data['avatar_url'] = user_info.avatar_url()
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json'))
 		else:
 			return HttpResponse('invalid image')
 
@@ -136,7 +144,7 @@ def save_file(file, path=''):
 	fd.close()
 
 def download_avatar(request):
-	image_name = request.POST.get('avatar_id')
+	image_name = request.POST.get('avatar_url')
 	logger.debug("image name : "+str(image_name))
     	if(image_name != None):
 		image_data = open('%s/%s' % (settings.MEDIA_ROOT , str(image_name)), "rb").read()
