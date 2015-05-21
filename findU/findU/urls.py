@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
-
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 admin.autodiscover()
 
@@ -13,4 +14,4 @@ urlpatterns = patterns('',
     url(r'^feed/',include('feed.urls',namespace='feed')),
     url(r'^friend/',include('friend.urls',namespace='friend')),
     url(r'^tips/',include('tips.urls',namespace='tips')),
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
