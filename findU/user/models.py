@@ -18,4 +18,4 @@ class UserInfo(models.Model):
 		if self.avatar and hasattr(self.avatar, 'url'):
 			return self.avatar.url
 		else:
-			return 'default'
+			return 'avatar/ic_launcher.png'

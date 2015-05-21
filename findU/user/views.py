@@ -129,7 +129,7 @@ def upload_avatar(request):
 			user_info.save()
 			data['status'] = 0
 			data['avatar_url'] = user_info.avatar_url()
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json'))
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 		else:
 			return HttpResponse('invalid image')
 

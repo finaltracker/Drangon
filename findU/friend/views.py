@@ -103,7 +103,9 @@ def get_friend(request):
 					record['nickname'] = smart_unicode(friend.nickname)
 					#TODO: fix it
 					record['avatar_url'] = friend_userinfo.avatar_url()
-					record['mobile'] = smart_unicode(friend.freind.username)
+			
+					import pdb; pdb.set_trace()
+					record['mobile'] = friend.friend.username
 					record['verifystatus'] = friend.verify_status
 
 					logger.debug("record :"+str(record))
