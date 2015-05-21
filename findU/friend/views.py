@@ -94,11 +94,12 @@ def get_friend(request):
 				data['update_type']=1
 				client_friends = Friend.objects.filter(user=client)
 
+			#import pdb; pdb.set_trace()
 			record_list = []
 			if client_friends:
 				for friend in client_friends:
 					record = {}
-					friend_userinfo = UserInfo.objects.get(user=friend)
+					friend_userinfo = UserInfo.objects.get(user=friend.friend)
 					record['group'] = smart_unicode(friend.group)
 					record['nickname'] = smart_unicode(friend.nickname)
 					#TODO: fix it
