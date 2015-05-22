@@ -105,7 +105,6 @@ def get_friend(request):
 					#TODO: fix it
 					record['avatar_url'] = friend_userinfo.avatar_url()
 			
-					import pdb; pdb.set_trace()
 					record['mobile'] = friend.friend.username
 					record['verifystatus'] = friend.verify_status
 
@@ -163,6 +162,7 @@ def accept_friend(request):
 			to_client_info.version_count = current_version
 			to_client_info.save()
 
+			push_target = to_client_info.imsi
 			jpush_send_message(str(mobile),push_target, 202)
 
 			data['status']=0
