@@ -13,6 +13,7 @@ from user.forms import UploadFileForm
 from django.conf import settings
 from django.core.urlresolvers import reverse
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +140,12 @@ def save_file(file, user_name, path=''):
 	filename = file._get_name()
 	logger.debug("[photo]save image: "+filename)
 
-	fd = open('%s/%s' % (settings.MEDIA_ROOT , str(path)+user_name), 'wb')
+	path = '%s/%s' % (settings.MEDIA_ROOT , str(path)+user_name)
+	#delete old file, and create new one
+	if os.path.isfile(path):
+		print 'delete existed file'
+		os.remove(path)
+	fd = open(path, 'wb')
 	for chunk in file.chunks():
 		fd.write(chunk)
 	fd.close()
