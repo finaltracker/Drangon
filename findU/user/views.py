@@ -139,7 +139,7 @@ def save_file(file, user_name, path=''):
 	filename = file._get_name()
 	logger.debug("[photo]save image: "+filename)
 
-	fd = open('%s/%s' % (settings.MEDIA_ROOT , str(path)+user_name, 'wb')
+	fd = open('%s/%s' % (settings.MEDIA_ROOT , str(path)+user_name), 'wb')
 	for chunk in file.chunks():
 		fd.write(chunk)
 	fd.close()
