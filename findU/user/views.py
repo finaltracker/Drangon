@@ -106,6 +106,7 @@ def check_register(request):
 			data['status']=0
 			data['username']=user_info.user.username
 			data['nickname']=user_info.nickname
+			data['avatar_url']=user_info.avatar_url()
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
 	data['status']=400
@@ -116,29 +117,29 @@ def upload_avatar(request):
 	data={}
 	#get image from client
 	#save image to media folder
+		
+	logger.debug("[photo]request all data: "+ str(request))
 	if request.method == "POST":
 		user_name = request.POST.get('mobile')
 		client = User.objects.get(username=user_name)
 		user_info = UserInfo.objects.get(user=client)
-		form = UploadFileForm(request.POST, request.FILES)
-		logger.debug("[photo]request POST form: "+ str(request.POST))
-		if form.is_valid() and form.is_multipart():
-			logger.debug("[photo]upload image: "+str(request.FILES))
-			save_file(request.FILES['image'])
-			user_info.avatar.save(request.FILES['image'].name, request.FILES['image'])
-			user_info.save()
-			data['status'] = 0
-			data['avatar_url'] = user_info.avatar_url()
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
-		else:
-			return HttpResponse('invalid image')
+		print str(request.FILES)
+		print str(request.FILES['avatar_url'])
+		logger.debug("[photo]request POST: "+ str(request.POST))
+		logger.debug("[photo]upload image: "+str(request.FILES))
+		save_file(request.FILES['avatar_url'],user_name)
+		user_info.avatar.save(user_name, request.FILES['avatar_url'])
+		user_info.save()
+		data['status'] = 0
+		data['avatar_url'] = user_info.avatar_url()
+		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
 
-def save_file(file, path=''):
+def save_file(file, user_name, path=''):
 
 	filename = file._get_name()
 	logger.debug("[photo]save image: "+filename)
 
-	fd = open('%s/%s' % (settings.MEDIA_ROOT , str(path)+str(filename)), 'wb')
+	fd = open('%s/%s' % (settings.MEDIA_ROOT , str(path)+user_name, 'wb')
 	for chunk in file.chunks():
 		fd.write(chunk)
 	fd.close()
