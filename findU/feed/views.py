@@ -5,10 +5,11 @@ from feed.models import PosInfo
 import time
 from django.utils import timezone
 import json
-import jpush as jpush
 import logging
-from findU.conf import app_key, master_secret
-
+from friend.models import Friend
+from utils.pack_jpush import jpush_send_message
+from utils.pack_json import toJSON
+ 
 # delta set as : half hour
 threshold = 0.5
 
@@ -26,27 +27,46 @@ def locate_update(request):
 		delta = (timezone.now() - target_pos.date).hours
 		if delta < threshold:
 			data['status']=0
-			data['location'] = {
-				'lant': target_pos.lat,
-				'longt': target_pos.lng,
-				'user': target_user,
-			}
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			data['moible'] = src_user
+			data['friend_mobile'] = target_user
+			data['lat'] = target_pos.lat
+			data['lng'] = target_pos.lng
+			return HttpResponse(toJSON(data),content_type='application/json')
 		else:
-			_jpush = jpush.JPush(app_key, master_secret)
-			push = _jpush.create_push()
-			push.audience = jpush.audience(
-				jpush.tag("tag1", target_user)
-			)
-			push.message = jpush.message(msg_content="locate", extras=src_user)
-			push.platform = jpush.all_
-			push.send()
-			data['status']=0
-			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+			jpush_send_message(src_user,target_user,303)
+			data['status']=401
+			return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
-	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+	return HttpResponse(toJSON(data),content_type='application/json')
 
+def locate_get_all(request):
+	data = {}
+
+	if request.method=='POST':		
+		logger.debug(str(request.POST))
+
+		src_user=request.POST.get('src_user')
+		target_user=request.POST.get('target_user')
+
+		my_user=User.objects.get(username=target_user)
+		friends = Friend.objects.filter(user=my_user)
+		all_friends = []
+		for relative_friend in friends:
+			target_pos=PosInfo(user=relative_friend.friend)
+			relative = {}
+			relative['friend_mobile'] = relative_friend.friend.username
+			relative['lat'] = target_pos.lat
+			relative['lng'] = target_pos.lng
+			all_friends.append(relative)
+
+		data['status']=0
+		data['moible'] = src_user
+		data['geo'] = all_freinds
+		return HttpResponse(toJSON(data),content_type='application/json')
+
+	data['status']=503
+	return HttpResponse(toJSON(data),content_type='application/json')
 
 def locate_upload(request):
 	data = {}
@@ -54,7 +74,7 @@ def locate_upload(request):
 	if request.method=='POST':		
 		logger.debug(str(request.POST))
 
-		user_name=request.POST.get('username')
+		user_name=request.POST.get('mobile')
 		lant=request.POST.get('lant')
 		longt=request.POST.get('longt')
 
@@ -65,7 +85,7 @@ def locate_upload(request):
 		posintof.lng = longt
 		posinfo.save()
 		data['status']=0
-		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
-	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+	return HttpResponse(toJSON(data),content_type='application/json')
