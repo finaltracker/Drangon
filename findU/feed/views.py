@@ -13,6 +13,8 @@ from utils.pack_json import toJSON
 # delta set as : half hour
 threshold = 0.5
 
+logger = logging.getLogger(__name__)
+
 def locate_get(request):
 	data = {}
 
@@ -40,7 +42,7 @@ def locate_get(request):
 			data['geo'] = all_freinds
 			return HttpResponse(toJSON(data),content_type='application/json')
 
-		else if require_type == "one":
+		elif require_type == "one":
 			user=User.objects.get(username=target_user)		
 			target_pos=PosInfo(user=user)
 			delta = (timezone.now() - target_pos.date).hours
@@ -85,7 +87,7 @@ def locate_upload(request):
 		
 		posinfo=PosInfo(user=user)
 		posinfo.lat = lant
-		posintof.lng = longt
+		posinto.lng = longt
 		posinfo.save()
 		data['status']=0
 		return HttpResponse(toJSON(data),content_type='application/json')
