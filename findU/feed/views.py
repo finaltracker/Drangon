@@ -23,7 +23,7 @@ def locate_get(request):
 
 		src_user=request.POST.get('mobile')
 		target_user=request.POST.get('friend_mobile')
-		require_type=request.POST.get('requireType')
+		require_type=request.POST.get('require_type')
 
 		if require_type == "all":
 			my_user=User.objects.get(username=src_user)
@@ -39,7 +39,7 @@ def locate_get(request):
 
 			data['status']=0
 			data['moible'] = src_user
-			data['geo'] = all_freinds
+			data['geo'] = all_friends
 			return HttpResponse(toJSON(data),content_type='application/json')
 
 		elif require_type == "one":
@@ -87,7 +87,7 @@ def locate_upload(request):
 		
 		posinfo=PosInfo(user=user)
 		posinfo.lat = lant
-		posinto.lng = longt
+		posinfo.lng = longt
 		posinfo.save()
 		data['status']=0
 		return HttpResponse(toJSON(data),content_type='application/json')
