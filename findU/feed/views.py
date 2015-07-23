@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 def locate_get(request):
 	data = {}
+	all_friends = []
 
 	if request.method=='POST':		
 		logger.debug(str(request.POST))
@@ -28,9 +29,10 @@ def locate_get(request):
 		if require_type == "all":
 			my_user=User.objects.get(username=src_user)
 			friends = Friend.objects.filter(user=my_user)
-			all_friends = []
+			
 			for relative_friend in friends:
-				target_pos=PosInfo(user=relative_friend.friend)
+				friend_all_pos=PosInfo.objects.filter(user=relative_friend.friend)
+				target_pos = friend_all_pos[0]
 				relative = {}
 				relative['friend_mobile'] = relative_friend.friend.username
 				relative['lat'] = target_pos.lat
@@ -44,13 +46,14 @@ def locate_get(request):
 
 		elif require_type == "one":
 			user=User.objects.get(username=target_user)		
-			target_pos=PosInfo(user=user)
-			delta = (timezone.now() - target_pos.date).hours
+			all_pos=PosInfo.objects.filter(user=user)
+			#delta = (timezone.now() - target_pos.date).hours
+			target_pos = all_pos[0]
+			delta = 0
 			if delta < threshold:
 				data['status']=0
 				data['moible'] = src_user
 
-				all_friends = []
 
 				relative = {}
 				relative['friend_mobile'] = target_user
@@ -58,7 +61,7 @@ def locate_get(request):
 				relative['lng'] = target_pos.lng	
 				all_friends.append(relative)
 
-				data['geo'] = all_freinds
+				data['geo'] = all_friends
 				return HttpResponse(toJSON(data),content_type='application/json')
 			else:
 				jpush_send_message(src_user,target_user,303)
@@ -90,6 +93,10 @@ def locate_upload(request):
 		posinfo.lng = longt
 		posinfo.save()
 		data['status']=0
+		''' for test
+		data['lng'] = posinfo.lng
+		data['lat'] = posinfo.lat
+		'''
 		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
