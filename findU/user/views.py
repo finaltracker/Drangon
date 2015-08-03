@@ -9,7 +9,6 @@ from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from user.models import UserInfo
-from user.forms import UploadFileForm
 from django.conf import settings
 from django.core.urlresolvers import reverse
 import logging
@@ -153,6 +152,6 @@ def save_file(file, user_name, path=''):
 def download_avatar(request):
 	image_name = request.POST.get('avatar_url')
 	logger.debug("image name : "+str(image_name))
-    	if(image_name != None):
+	if(image_name != None):
 		image_data = open('%s/%s' % (settings.MEDIA_ROOT , str(image_name)), "rb").read()
 	return HttpResponse(image_data, content_type="image/png")	

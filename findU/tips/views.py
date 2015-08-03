@@ -40,8 +40,10 @@ def send_tip(request):
 		tip.receiver = friend
 		tip.message = content
 		tip.create_time = create_time
-		tip.photo = photo_url
-		tip.audio = audio_url
+		photo_name = request.FILES['photo_file']._get_name()
+		tip.photo.save(photo_name, request.FILES['photo_file'])
+		audio_name = request.FILES['audio_file']._get_name()
+		tip.audio.save(audio_name, request.FILES['audio_file'])
 		tip.save()
 		# retrieve tip id for next to get
 		cacheID = tip.id
@@ -100,6 +102,6 @@ def get_tip(request):
 		data['friend_mobile']=tip.receiver
 		data['message']=tip.message
 		data['create_time']=tip.create_time
-		data['audio_url']=tip.audio
-		data['photo_url']=tip.photo
-		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+		data['audio_url']=tip.audio_url()
+		data['photo_url']=tip.photo_url()
+		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')	
