@@ -40,16 +40,16 @@ def send_tip(request):
 		tip.receiver = friend
 		tip.message = content
 		tip.create_time = create_time
-		if request.FILES['photo_file']:
+		if 'photo_file' in request.FILES:
 			photo_name = request.FILES['photo_file']._get_name()
 			tip.photo.save(photo_name, request.FILES['photo_file'])
-		if request.FILES['audio_file']:
+		if 'audio_file' in request.FILES:
 			audio_name = request.FILES['audio_file']._get_name()
 			tip.audio.save(audio_name, request.FILES['audio_file'])
 		tip.save()
 		# retrieve tip id for next to get
 		cacheID = tip.id
-
+ 	
 		push_target = to_friend_info.imsi
 
 		_jpush = jpush.JPush(app_key, master_secret)
