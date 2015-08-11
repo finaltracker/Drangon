@@ -40,10 +40,12 @@ def send_tip(request):
 		tip.receiver = friend
 		tip.message = content
 		tip.create_time = create_time
-		photo_name = request.FILES['photo_file']._get_name()
-		tip.photo.save(photo_name, request.FILES['photo_file'])
-		audio_name = request.FILES['audio_file']._get_name()
-		tip.audio.save(audio_name, request.FILES['audio_file'])
+		if request.FILES['photo_file']:
+			photo_name = request.FILES['photo_file']._get_name()
+			tip.photo.save(photo_name, request.FILES['photo_file'])
+		if request.FILES['audio_file']:
+			audio_name = request.FILES['audio_file']._get_name()
+			tip.audio.save(audio_name, request.FILES['audio_file'])
 		tip.save()
 		# retrieve tip id for next to get
 		cacheID = tip.id
