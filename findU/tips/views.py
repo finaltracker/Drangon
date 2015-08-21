@@ -109,8 +109,10 @@ def get_tip(request):
 		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')	
 
 def dload_audio(request):
+	data = {}
 	audio_name = request.POST.get('audio_url')
 	logger.debug("audio name : "+str(audio_name))
 	if(audio_name != None):
 		audio_data = open(audio_name, "rb").read()
-	return HttpResponse(audio_data, content_type="audio/mpeg")	
+	data["audio"] = audio_data
+	return HttpResponse(json.dump(data,ensure_ascii=False), content_type="application/octet-stream")	
