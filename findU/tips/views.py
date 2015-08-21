@@ -114,6 +114,6 @@ def dload_audio(request):
 	audio_name = request.POST.get('audio_url')
 	logger.debug("audio name : "+str(audio_name))
 	if(audio_name != None):
-		audio_data = open('%s/%s' % (settings.MEDIA_ROOT,str(audio_name[24:])), "rb").read()
+		audio_data = open('%s/%s' % (settings.MEDIA_ROOT,str(audio_name[audio_name.find("audio"):])), "rb").read()
 	data["audio"] = audio_data
 	return HttpResponse(json.dumps(data,ensure_ascii=False), content_type="application/octet-stream")	
