@@ -6,6 +6,7 @@ from tips.models import Tip
 from django.core.exceptions import ObjectDoesNotExist
 import json
 import jpush as jpush
+from os.path import getsize
 from django.conf import settings
 from findU.conf import app_key, master_secret
 import logging
@@ -114,6 +115,8 @@ def dload_audio(request):
 	audio_name = request.POST.get('audio_url')
 	logger.debug("audio name : "+str(audio_name))
 	if(audio_name != None):
-		audio_data = open('%s/%s' % (settings.MEDIA_ROOT,str(audio_name[audio_name.find("audio"):])), "rb").read()
+		filePath = '%s/%s' % (settings.MEDIA_ROOT,str(audio_name[audio_name.find("audio"):]))
+		audio_data = open(filePath, "rb").read()
+		audio_length = getsize(filePath)
 	data["audio"] = audio_data
-	return HttpResponse(json.dumps(data,ensure_ascii=False), content_type="application/octet-stream")	
+	return HttpResponse(json.dumps(data,ensure_ascii=False), content_type="application/octet-stream", content_length=audio_length)	
