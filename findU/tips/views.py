@@ -120,4 +120,6 @@ def dload_audio(request):
 		audio_length = getsize(filePath)
 	data["audio"] = audio_data
 	data["audio_length"] = audio_length
-	return HttpResponse(json.dumps(data,ensure_ascii=False), content_type="application/octet-stream", content_length=audio_length)	
+	response = HttpResponse(audio_data, content_type="application/octet-stream")
+	response['Content-Length'] = audio_length
+	return response

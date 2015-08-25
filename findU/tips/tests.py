@@ -23,4 +23,13 @@ class tipTests(TestCase):
 	
 		response = self.client.post(reverse('tips:get_tip'), json_data)
 
-		self.assertEqual(response.content, "ok")	
+		self.assertEqual(response.content, "ok")
+
+	def test_dload_audio(self):
+		json_data = {
+			"audio_url": "audio/ic_launcher.png",
+		}
+	
+		response = self.client.post(reverse('tips:dload_audio'), json_data)
+
+		self.assertEqual(response.content, "ok")		
