@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'friend',
     'tips',
 	'feed',
+    'ball',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -118,6 +119,14 @@ LOGGING = {
         'tips': {
             'handlers': ['file'],
             'level': 'DEBUG'
-        },                       
+        },
+        'feed': {
+            'handlers': ['file'],
+            'level': 'DEBUG'
+        },          
+        'ball': {
+            'handlers': ['file'],
+            'level': 'DEBUG'
+        },                               
     },
 }

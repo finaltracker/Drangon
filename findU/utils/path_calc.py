@@ -3,83 +3,38 @@ import time
 china_lng = (73.33, 135.05)
 china_lat = (3.51, 53.33)
 
-
-
-class Node:
-	def __init__(self, data):
-		self._data = data
-		self._children = []
-
-	def get_data(self):
-		return self._data
-
-	def get_children(self):
-		return self._children
-
-	def add(self, Node):
-		if len(self._children) == 4:
-			return False
-		else:
-			self._children.append(Node)
-
-	def go(self,data):
-		for child in self._children:
-			if child.get_data() == data:
-				return child
-		return None
-
-class Tree:
-	def __init__(self):
-		self._head = Node('China')
-		
-	def link_to_head(self, Node):
-		self._head.add(Node)
-
-	def insert(self, path, data):
-		current = self._head
-		for step in path:
-			if current.go(step) == None:
-				return False
-			else:
-				current = current.go(step)
-		current.add(Node(data))
-		return True
-
-	def search(self, path):
-		current = self._head
-		for step in path:
-			if current.go(step) == None:
-				return None
-			else:
-				current = current.go(step)
-		return current
+import math
+ 
+def distance_on_unit_sphere(lat1, long1, lat2, long2):
+ 
+    # Convert latitude and longitude to 
+    # spherical coordinates in radians.
+    degrees_to_radians = math.pi/180.0
+         
+    # phi = 90 - latitude
+    phi1 = (90.0 - lat1)*degrees_to_radians
+    phi2 = (90.0 - lat2)*degrees_to_radians
+         
+    # theta = longitude
+    theta1 = long1*degrees_to_radians
+    theta2 = long2*degrees_to_radians
+         
+    # Compute spherical distance from spherical coordinates.
+         
+    # For two locations in spherical coordinates 
+    # (1, theta, phi) and (1, theta', phi')
+    # cosine( arc length ) = 
+    #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
+    # distance = rho * arc length
+     
+    cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
+           math.cos(phi1)*math.cos(phi2))
+    arc = math.acos( cos )
+ 
+    # Remember to multiply arc by the radius of the earth 
+    # in your favorite set of units to get length.
+    return arc
 
 
 
 if __name__ == '__main__':
-	begin = (10,5)
-	end = (20,13)
-	duration = 20
-
-	x = float(begin[0])
-	y = float(begin[1])
-	'''
-	linear equation
-	'''
-	x1 = float(begin[0])
-	y1 = float(begin[1])
-	x2 = float(end[0])
-	y2 = float(end[1])
-	a = (y2 - y1)/(x2-x1)
-	b = (y2*x1-y1*x2)/(x1-x2)
-
-	step = (x2-x1)/20
-
-	print 'a: %f, b: %d, step: %f' %(a,b,step)
-	i = 1
-	while i <= duration:
-		print 'x : %d, y: %d' %(x, y)
-		x += step
-		y = a*x+b
-		i += 1
-		time.sleep(1)

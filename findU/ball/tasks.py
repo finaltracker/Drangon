@@ -4,27 +4,43 @@ from user.models import UserInfo
 from friend.models import Friend
 from feed.models import PosInfo
 from utils.pack_jpush import jpush_send_message
+from path_calc import distance_on_unit_sphere
+import math
 
 @shared_task
 def ball_track(*args, **kwargs):
 	user = kwargs['user']
-	begin = [kwargs['begin_lnt'],kwargs['begin_lat']]
-	end = [kwargs['end_lng'],kwargs['end_lat']]
+	ball_id = kwargs['ball_id']
+	begin_lnt = kwargs['begin_lnt']
+	begin_lat = kwargs['begin_lat']
+	end_lnt = kwargs['end_lng']
+	end_lat = kwargs['end_lat']
 	duration = kwargs['duration']
 
-	x = float(begin[0])
-	y = float(begin[1])
+	e = 0.0162
+	kilometers = 6373
+
+	#distance = distance_on_unit_sphere(begin_lat,begin_lnt,end_lat,end_lng) * kilometers
+
+	x = float(begin_lnt)
+	y = float(begin_lat)
 	'''
 	linear equation, not for lng/lat geo
 	'''
-	x1 = float(begin[0])
-	y1 = float(begin[1])
-	x2 = float(end[0])
-	y2 = float(end[1])
+	x1 = x
+	y1 = y
+	x2 = float(end_lng)
+	y2 = float(end_lat)
 	a = (y2 - y1)/(x2-x1)
 	b = (y2*x1-y1*x2)/(x1-x2)
 
 	step = (x2-x1)/0.0162
+	'''
+	if math.fabs(x2-x1) > math.fabs(y2-y1):
+		step = (x2-x1)/0.0162
+	else:
+		step = (y2-y1)/0.0162
+	'''
 
 	print 'a: %f, b: %d, step: %f' %(a,b,step)
 	i = 1
@@ -41,10 +57,18 @@ def ball_track(*args, **kwargs):
 		x += step
 		y = a*x+b
 
+		i += 1
+		time.sleep(1)
+
 		'''
-		get the near friend with location
+		save the ball location, get the near friend with location
 		do some harm or bless to them
 		'''
+		ball = Ball.objects.get(pk=ball_id)
+		ball.current_lng = y
+		ball.current_lat = x
+		ball.save()
+
 		for friend in friends:
 			position = PosInfo.objects.get(user=friend.friend)
 			if( x-e <position.lng<x+e and y-e <position.lat < y+e ):
@@ -59,8 +83,6 @@ def ball_track(*args, **kwargs):
 				push_target = owner_info.imsi
 				jpush_send_message(str(friend.friend.username),push_target, 285)
 
-		i += 1
-		time.sleep(1)
 	'''
 	if it get the end, notify the owner
 	'''

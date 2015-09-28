@@ -9,5 +9,5 @@ class Ball(models.Model):
 	duration = models.IntField(default=0)
 	end_lat = models.FloatField(default=0,db_index=True)
 	end_lng = models.FloatField(default=0,db_index=True)
-	begin_lat = models.FloatField(default=0,db_index=True)
-	begin_lng = models.FloatField(default=0,db_index=True)
+	current_lat = models.FloatField(default=0,db_index=True)
+	current_lng = models.FloatField(default=0,db_index=True)
