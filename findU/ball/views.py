@@ -25,8 +25,9 @@ def start(request):
 		begin_lat=request.POST.get('begin_lat')
 		
 		my_user=User.objects.get(username=src_user)
-		ball = new Ball(user=my_user)
+		ball = Ball(user=my_user)
 		ball.duration = duration
+		print 'ball_type {0}'.format(ball_type)
 		ball.ball_type = ball_type
 		ball.ball_content = ball_content
 		ball.end_lat = end_lat
@@ -39,7 +40,7 @@ def start(request):
 		start ball running, if ball hit people, notify two side.
 		if not but get to end, notify two side.
 		'''
-		ball_track(user=src_user,ball_id=ball.id, duration=duration,
+		ball_track.delay(user=src_user,ball_id=ball.id, duration=duration,
 			end_lat=end_lat,end_lng=end_lng,begin_lng=begin_lng,begin_lat=begin_lat)
 
 		data['status']=0
@@ -84,6 +85,8 @@ def locate_get(request):
 		distance_scale_lng = 0.0162
 		distance_scale_lat = 0.09
 
+		ball_objs = []
+
 		if mask==1:	
 			my_user=User.objects.get(username=src_user)
 
@@ -94,7 +97,6 @@ def locate_get(request):
 				& ~Q(user=my_user))
 
 			if balls:
-				ball_objs = []
 				for ball in balls:
 					ball_obj['user'] = ball.user.username
 					ball_obj['ball_id'] = ball.id
@@ -109,7 +111,6 @@ def locate_get(request):
 			balls = Ball.objects.filter(user=my_user)
 
 			if balls:
-				ball_objs = []
 				for ball in balls:
 					ball_obj['user'] = ball.user.username
 					ball_obj['ball_id'] = ball.id
@@ -126,7 +127,6 @@ def locate_get(request):
 				& Q(current_lat_gt=lat-distance_scale_lat*distance))
 
 			if balls:
-				ball_objs = []
 				for ball in balls:
 					ball_obj['user'] = ball.user.username
 					ball_obj['ball_id'] = ball.id

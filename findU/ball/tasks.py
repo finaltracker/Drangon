@@ -1,17 +1,20 @@
 from __future__ import absolute_import
 from celery import shared_task
 from user.models import UserInfo
+from django.contrib.auth.models import User
 from friend.models import Friend
 from feed.models import PosInfo
+from ball.models import Ball
 from utils.pack_jpush import jpush_send_message
 from utils.path_calc import distance_on_unit_sphere
 import math
+import time
 
 @shared_task
 def ball_track(*args, **kwargs):
 	user = kwargs['user']
 	ball_id = kwargs['ball_id']
-	begin_lnt = kwargs['begin_lnt']
+	begin_lnt = kwargs['begin_lng']
 	begin_lat = kwargs['begin_lat']
 	end_lnt = kwargs['end_lng']
 	end_lat = kwargs['end_lat']
@@ -29,7 +32,7 @@ def ball_track(*args, **kwargs):
 	'''
 	x1 = x
 	y1 = y
-	x2 = float(end_lng)
+	x2 = float(end_lnt)
 	y2 = float(end_lat)
 	a = (y2 - y1)/(x2-x1)
 	b = (y2*x1-y1*x2)/(x1-x2)
@@ -48,7 +51,8 @@ def ball_track(*args, **kwargs):
 	my_user=User.objects.get(username=user)
 	friends = Friend.objects.filter(user=my_user)
 	if(friends):
-		print '{0} friends. aho'.format(friends.length)
+		#print '{0} friends. aho'.format(friends.length)
+		print 'friends aho'
 	else:
 		print 'no friends. oops'
 
@@ -70,7 +74,7 @@ def ball_track(*args, **kwargs):
 		ball.save()
 
 		for friend in friends:
-			position = PosInfo.objects.get(user=friend.friend)
+			position = PosInfo.objects.filter(user=friend.friend)[0]
 			if( x-e <position.lng<x+e and y-e <position.lat < y+e ):
 				'''
 				got clash and notify the friend and owner
