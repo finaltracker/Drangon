@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^user/',include('user.urls',namespace='user')),
     url(r'^feed/',include('feed.urls',namespace='feed')),
+    url(r'^ball/',include('ball.urls',namespace='ball')),
     url(r'^friend/',include('friend.urls',namespace='friend')),
     url(r'^tips/',include('tips.urls',namespace='tips')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
