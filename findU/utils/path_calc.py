@@ -38,3 +38,4 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
 
 
 if __name__ == '__main__':
+	print 'path calc'

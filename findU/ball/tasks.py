@@ -4,7 +4,7 @@ from user.models import UserInfo
 from friend.models import Friend
 from feed.models import PosInfo
 from utils.pack_jpush import jpush_send_message
-from path_calc import distance_on_unit_sphere
+from utils.path_calc import distance_on_unit_sphere
 import math
 
 @shared_task

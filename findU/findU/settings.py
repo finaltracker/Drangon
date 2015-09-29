@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'tips',
 	'feed',
     'ball',
+    'djcelery',
 )
 
 MIDDLEWARE_CLASSES = (
