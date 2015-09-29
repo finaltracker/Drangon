@@ -45,6 +45,7 @@ INSTALLED_APPS = (
 	'feed',
     'ball',
     'djcelery',
+    'kombu.transport.django',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -61,7 +62,6 @@ ROOT_URLCONF = 'findU.urls'
 
 WSGI_APPLICATION = 'findU.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
@@ -71,6 +71,9 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
