@@ -87,6 +87,8 @@ def locate_get(request):
 
 		ball_objs = []
 
+		mask = int(mask)
+
 		if mask==1:	
 			my_user=User.objects.get(username=src_user)
 
