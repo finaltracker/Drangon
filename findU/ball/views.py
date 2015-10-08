@@ -88,18 +88,22 @@ def locate_get(request):
 		ball_objs = []
 
 		mask = int(mask)
+		distance = int(distance)
+		lng = float(lng)
+		lat = float(lat)
 
 		if mask==1:	
 			my_user=User.objects.get(username=src_user)
 
-			balls = Ball.objects.filter(Q(current_lng_lt=lng+distance_scale_lng*distance)
-				& Q(current_lng_gt=lng-distance_scale_lng*distance)
-				& Q(current_lat_lt=lat+distance_scale_lat*distance)
-				& Q(current_lat_gt=lat-distance_scale_lat*distance)
+			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
+				& Q(current_lng__gt=lng-distance_scale_lng*distance)
+				& Q(current_lat__lt=lat+distance_scale_lat*distance)
+				& Q(current_lat__gt=lat-distance_scale_lat*distance)
 				& ~Q(user=my_user))
 
 			if balls:
 				for ball in balls:
+					ball_obj = {}
 					ball_obj['user'] = ball.user.username
 					ball_obj['ball_id'] = ball.id
 					ball_obj['type'] = ball.ball_type
@@ -114,6 +118,7 @@ def locate_get(request):
 
 			if balls:
 				for ball in balls:
+					ball_obj = {}
 					ball_obj['user'] = ball.user.username
 					ball_obj['ball_id'] = ball.id
 					ball_obj['type'] = ball.ball_type
@@ -123,13 +128,14 @@ def locate_get(request):
 					ball_objs.append(ball_obj)
 					
 		elif mask==3:											
-			balls = Ball.objects.filter(Q(current_lng_lt=lng+distance_scale_lng*distance)
-				& Q(current_lng_gt=lng-distance_scale_lng*distance)
-				& Q(current_lat_lt=lat+distance_scale_lat*distance)
-				& Q(current_lat_gt=lat-distance_scale_lat*distance))
+			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
+				& Q(current_lng__gt=lng-distance_scale_lng*distance)
+				& Q(current_lat__lt=lat+distance_scale_lat*distance)
+				& Q(current_lat__gt=lat-distance_scale_lat*distance))
 
 			if balls:
 				for ball in balls:
+					ball_obj = {}
 					ball_obj['user'] = ball.user.username
 					ball_obj['ball_id'] = ball.id
 					ball_obj['type'] = ball.ball_type
