@@ -37,13 +37,11 @@ def ball_track(*args, **kwargs):
 	a = (y2 - y1)/(x2-x1)
 	b = (y2*x1-y1*x2)/(x1-x2)
 
-	step = (x2-x1)/0.0162
-	'''
+	#step = (x2-x1)/0.0162
 	if math.fabs(x2-x1) > math.fabs(y2-y1):
-		step = (x2-x1)/0.0162
+		step = (x2-x1)/duration
 	else:
-		step = (y2-y1)/0.0162
-	'''
+		step = (y2-y1)/duration
 
 	print 'a: %f, b: %d, step: %f' %(a,b,step)
 	i = 1
@@ -56,10 +54,17 @@ def ball_track(*args, **kwargs):
 	else:
 		print 'no friends. oops'
 
+	ball = Ball.objects.get(pk=ball_id)
+
 	while i <= duration:
 		print 'x : %d, y: %d' %(x, y)
-		x += step
-		y = a*x+b
+
+		if math.fabs(x2-x1) > math.fabs(y2-y1):
+			x += step
+			y = a*x+b
+		else:
+			y += step
+			x = (y-b)/a
 
 		i += 1
 		time.sleep(1)
@@ -68,7 +73,6 @@ def ball_track(*args, **kwargs):
 		save the ball location, get the near friend with location
 		do some harm or bless to them
 		'''
-		ball = Ball.objects.get(pk=ball_id)
 		ball.current_lng = y
 		ball.current_lat = x
 		ball.save()
@@ -87,9 +91,17 @@ def ball_track(*args, **kwargs):
 				push_target = owner_info.imsi
 				jpush_send_message(str(friend.friend.username),push_target, 285)
 
+				# task has finished, so return
+				ball.ball_status = 3
+				ball.save()
+				return
+
 	'''
 	if it get the end, notify the owner
 	'''
+	ball.ball_status = 3
+	ball.save()
+
 	owner_info = UserInfo.objects.get(user=my_user)
 	push_target = owner_info.imsi
 	jpush_send_message(str(friend.friend.username),push_target, 287)

@@ -64,6 +64,7 @@ def current_loc(request):
 		data['status']=0
 		data['moible'] = src_user
 		data['ball_id'] = ball.id
+		data['ball_status'] = ball.ball_status
 		data['current_lng'] = ball.current_lng
 		data['current_lat'] = ball.current_lat
 		return HttpResponse(toJSON(data),content_type='application/json')
@@ -99,7 +100,8 @@ def locate_get(request):
 				& Q(current_lng__gt=lng-distance_scale_lng*distance)
 				& Q(current_lat__lt=lat+distance_scale_lat*distance)
 				& Q(current_lat__gt=lat-distance_scale_lat*distance)
-				& ~Q(user=my_user))
+				& ~Q(user=my_user)
+				& Q(ball_status=0))
 
 			if balls:
 				for ball in balls:
@@ -114,7 +116,7 @@ def locate_get(request):
 
 		elif mask==2:
 			my_user=User.objects.get(username=src_user)
-			balls = Ball.objects.filter(user=my_user)
+			balls = Ball.objects.filter(user=my_user).filter(ball_status=0)
 
 			if balls:
 				for ball in balls:
@@ -122,6 +124,7 @@ def locate_get(request):
 					ball_obj['user'] = ball.user.username
 					ball_obj['ball_id'] = ball.id
 					ball_obj['type'] = ball.ball_type
+					ball_obj['ball_status'] = ball.ball_status
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
@@ -131,7 +134,8 @@ def locate_get(request):
 			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
 				& Q(current_lng__gt=lng-distance_scale_lng*distance)
 				& Q(current_lat__lt=lat+distance_scale_lat*distance)
-				& Q(current_lat__gt=lat-distance_scale_lat*distance))
+				& Q(current_lat__gt=lat-distance_scale_lat*distance)
+				& Q(ball_status=0))
 
 			if balls:
 				for ball in balls:
