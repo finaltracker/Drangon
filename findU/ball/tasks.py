@@ -25,7 +25,10 @@ def ball_track(*args, **kwargs):
 
 	#distance = distance_on_unit_sphere(begin_lat,begin_lnt,end_lat,end_lng) * kilometers
 
-	duration = float(duration)
+	# duration is minutes, transform to seconds
+	duration = float(duration) * 60
+	print 'duration : %d' %duration
+
 	x = float(begin_lnt)
 	y = float(begin_lat)
 	'''
@@ -58,7 +61,7 @@ def ball_track(*args, **kwargs):
 	ball = Ball.objects.get(pk=ball_id)
 
 	while i <= duration:
-		print 'x : %d, y: %d' %(x, y)
+		print 'x : %f, y: %f' %(x, y)
 
 		if math.fabs(x2-x1) > math.fabs(y2-y1):
 			x += step
@@ -72,14 +75,18 @@ def ball_track(*args, **kwargs):
 
 		'''
 		save the ball location, get the near friend with location
-		do some harm or bless to them
+		and do some harm or bless to them
 		'''
-		ball.current_lng = y
-		ball.current_lat = x
+		ball.current_lng = x
+		ball.current_lat = y
 		ball.save()
 
 		for friend in friends:
-			position = PosInfo.objects.filter(user=friend.friend)[0]
+			positions = PosInfo.objects.filter(user=friend.friend)
+			if positions:
+				position = positions[0]
+			else:
+				print 'no position.'
 			if( x-e <position.lng<x+e and y-e <position.lat < y+e ):
 				'''
 				got clash and notify the friend and owner

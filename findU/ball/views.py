@@ -134,10 +134,10 @@ def locate_get(request):
 			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
 				& Q(current_lng__gt=lng-distance_scale_lng*distance)
 				& Q(current_lat__lt=lat+distance_scale_lat*distance)
-				& Q(current_lat__gt=lat-distance_scale_lat*distance)
-				& Q(ball_status=0))
+				& Q(current_lat__gt=lat-distance_scale_lat*distance)).filter(ball_status=0)
 
 			if balls:
+				print 'got.'
 				for ball in balls:
 					ball_obj = {}
 					ball_obj['user'] = ball.user.username
@@ -147,6 +147,8 @@ def locate_get(request):
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
 					ball_objs.append(ball_obj)
+			else:
+				print 'nothing.'
 
 		else:
 			print 'not support!!'		
