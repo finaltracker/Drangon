@@ -25,6 +25,7 @@ def ball_track(*args, **kwargs):
 
 	#distance = distance_on_unit_sphere(begin_lat,begin_lnt,end_lat,end_lng) * kilometers
 
+	duration = float(duration)
 	x = float(begin_lnt)
 	y = float(begin_lat)
 	'''
