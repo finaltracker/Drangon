@@ -26,7 +26,7 @@ def ball_track(*args, **kwargs):
 	#distance = distance_on_unit_sphere(begin_lat,begin_lnt,end_lat,end_lng) * kilometers
 
 	# duration is minutes, transform to seconds
-	duration = float(duration) * 60
+	duration = float(duration) / 1000
 	print 'duration : %d' %duration
 
 	x = float(begin_lnt)
@@ -91,6 +91,7 @@ def ball_track(*args, **kwargs):
 				'''
 				got clash and notify the friend and owner
 				'''
+				print 'clash friend.'
 				friend_info = UserInfo.objects.get(user=friend.friend)
 				push_target = friend_info.imsi
 				jpush_send_message(str(user),push_target, 283)
@@ -110,6 +111,7 @@ def ball_track(*args, **kwargs):
 	ball.ball_status = 3
 	ball.save()
 
+	print 'ball boom.'
 	owner_info = UserInfo.objects.get(user=my_user)
 	push_target = owner_info.imsi
 	jpush_send_message(str(friend.friend.username),push_target, 287)
