@@ -9,6 +9,7 @@ from utils.pack_jpush import jpush_send_message
 from utils.path_calc import distance_on_unit_sphere
 import math
 import time
+from django.db.models import Q
 
 @shared_task
 def ball_track(*args, **kwargs):
@@ -51,7 +52,7 @@ def ball_track(*args, **kwargs):
 	i = 1
 
 	my_user=User.objects.get(username=user)
-	friends = Friend.objects.filter(user=my_user)
+	friends = Friend.objects.filter(user=my_user).filter(~Q(friend=my_user))
 	if(friends):
 		#print '{0} friends. aho'.format(friends.length)
 		print 'friends aho'
