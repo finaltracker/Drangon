@@ -115,4 +115,4 @@ def ball_track(*args, **kwargs):
 	print 'ball boom.'
 	owner_info = UserInfo.objects.get(user=my_user)
 	push_target = owner_info.imsi
-	jpush_send_message(str(friend.friend.username),push_target, 287)
+	jpush_send_message(str(my_user.username),push_target, 287)
