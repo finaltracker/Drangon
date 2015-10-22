@@ -102,6 +102,11 @@ def ball_track(*args, **kwargs):
 				jpush_send_message(str(friend.friend.username),push_target, 285)
 
 				# task has finished, so return
+				ball.catcher = friend.friend
+				# hardcode here
+				ball.demange_score = 100
+				ball.reward_score = 300
+
 				ball.ball_status = 3
 				ball.save()
 				return
@@ -109,6 +114,11 @@ def ball_track(*args, **kwargs):
 	'''
 	if it get the end, notify the owner
 	'''
+	ball.catcher = my_user
+	# hardcode here
+	ball.demange_score = 100
+	ball.reward_score = 0
+
 	ball.ball_status = 3
 	ball.save()
 
