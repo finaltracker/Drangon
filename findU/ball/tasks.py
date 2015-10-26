@@ -94,12 +94,19 @@ def ball_track(*args, **kwargs):
 				'''
 				print 'clash friend.'
 				friend_info = UserInfo.objects.get(user=friend.friend)
+				push_data = {}
 				push_target = friend_info.imsi
-				jpush_send_message(str(user),push_target, 283)
+
+				push_data['receiver']=str(user)
+				push_data['end_lat']=ball.current_lat
+				push_data['end_lng']=ball.current_lng
+				push_data['ball_id']=ball_id
+				jpush_send_message(str(push_data),push_target, 283)
 
 				owner_info = UserInfo.objects.get(user=my_user)
 				push_target = owner_info.imsi
-				jpush_send_message(str(friend.friend.username),push_target, 285)
+				push_data['receiver']=str(friend.friend.username)			
+				jpush_send_message(str(push_data),push_target, 285)
 
 				# task has finished, so return
 				ball.catcher = friend.friend
@@ -125,4 +132,9 @@ def ball_track(*args, **kwargs):
 	print 'ball boom.'
 	owner_info = UserInfo.objects.get(user=my_user)
 	push_target = owner_info.imsi
-	jpush_send_message(str(my_user.username),push_target, 287)
+	push_data = {}
+	push_data['receiver']=str(my_user.username)
+	push_data['end_lat']=end_lat
+	push_data['end_lng']=end_lng
+	push_data['ball_id']=ball_id
+	jpush_send_message(str(push_data),push_target, 287)
