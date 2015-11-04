@@ -15,3 +15,4 @@ class Ball(models.Model):
 	current_lng = models.FloatField(default=0,db_index=True)
 	demange_score = models.IntegerField(default=0)
 	reward_score = models.IntegerField(default=0)
+	end_date = models.DateTimeField(auto_now=True)

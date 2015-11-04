@@ -67,6 +67,8 @@ def current_loc(request):
 		data['ball_status'] = ball.ball_status
 		data['current_lng'] = ball.current_lng
 		data['current_lat'] = ball.current_lat
+		data['begin_date'] = ball.date
+		data['end_date'] = ball.end_date
 		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
@@ -184,6 +186,8 @@ def get_all(request):
 				ball_obj['content'] = ball.ball_content
 				ball_obj['current_lng'] = ball.current_lng
 				ball_obj['current_lat'] = ball.current_lat
+				ball_obj['begin_date'] = ball.date
+				ball_obj['end_date'] = ball.end_date
 				ball_objs.append(ball_obj)
 
 			data['status']=0
