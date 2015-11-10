@@ -171,29 +171,76 @@ def get_all(request):
 
 		src_user=request.POST.get('mobile')
 		since_date=request.POST.get('since_date')
+		require_type=request.POST.get('require_type')
 		my_user=User.objects.get(username=src_user)
-		balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user))
+
+		from datetime import datetime
+		if since_date:
+			date_object = datetime.strptime(since_date, '%b %d %Y %I:%M%p')
+		else:
+			date_object = datetime.now()
+
 		ball_objs = []
+		if require_type == 1:
+			balls = Ball.objects.filter(Q(user=my_user)&Q(begin_date_lt=date_object))
+			
+			if balls:
+				for ball in balls:
+					ball_obj = {}
+					ball_obj['sender'] = ball.user.username
+					ball_obj['catcher'] = ball.catcher.username
+					ball_obj['ball_id'] = ball.id
+					ball_obj['type'] = ball.ball_type
+					ball_obj['ball_status'] = ball.ball_status
+					ball_obj['content'] = ball.ball_content
+					ball_obj['current_lng'] = ball.current_lng
+					ball_obj['current_lat'] = ball.current_lat
+					ball_obj['begin_date'] = ball.date
+					ball_obj['end_date'] = ball.end_date
+					ball_objs.append(ball_obj)	
 
-		if balls:
-			for ball in balls:
-				ball_obj = {}
-				ball_obj['sender'] = ball.user.username
-				ball_obj['catcher'] = ball.catcher.username
-				ball_obj['ball_id'] = ball.id
-				ball_obj['type'] = ball.ball_type
-				ball_obj['ball_status'] = ball.ball_status
-				ball_obj['content'] = ball.ball_content
-				ball_obj['current_lng'] = ball.current_lng
-				ball_obj['current_lat'] = ball.current_lat
-				ball_obj['begin_date'] = ball.date
-				ball_obj['end_date'] = ball.end_date
-				ball_objs.append(ball_obj)
+		elif require_type == 2:
+			balls = Ball.objects.filter(Q(catcher=my_user)&Q(end_date_lt=date_object))
+			
+			if balls:
+				for ball in balls:
+					ball_obj = {}
+					ball_obj['sender'] = ball.user.username
+					ball_obj['catcher'] = ball.catcher.username
+					ball_obj['ball_id'] = ball.id
+					ball_obj['type'] = ball.ball_type
+					ball_obj['ball_status'] = ball.ball_status
+					ball_obj['content'] = ball.ball_content
+					ball_obj['current_lng'] = ball.current_lng
+					ball_obj['current_lat'] = ball.current_lat
+					ball_obj['begin_date'] = ball.date
+					ball_obj['end_date'] = ball.end_date
+					ball_objs.append(ball_obj)
 
-			data['status']=0
-			data['moible'] = src_user
-			data['balls'] = ball_objs
-			return HttpResponse(toJSON(data),content_type='application/json')
+		elif require_type == 3:
+			balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user))
+			
+			if balls:
+				for ball in balls:
+					ball_obj = {}
+					ball_obj['sender'] = ball.user.username
+					ball_obj['catcher'] = ball.catcher.username
+					ball_obj['ball_id'] = ball.id
+					ball_obj['type'] = ball.ball_type
+					ball_obj['ball_status'] = ball.ball_status
+					ball_obj['content'] = ball.ball_content
+					ball_obj['current_lng'] = ball.current_lng
+					ball_obj['current_lat'] = ball.current_lat
+					ball_obj['begin_date'] = ball.date
+					ball_obj['end_date'] = ball.end_date
+					ball_objs.append(ball_obj)
+		else:
+			print 'not support'
+
+		data['status']=0
+		data['moible'] = src_user
+		data['balls'] = ball_objs
+		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
 	return HttpResponse(toJSON(data),content_type='application/json')				
