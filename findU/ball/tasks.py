@@ -15,29 +15,29 @@ from django.db.models import Q
 def ball_track(*args, **kwargs):
 	user = kwargs['user']
 	ball_id = kwargs['ball_id']
-	begin_lnt = kwargs['begin_lng']
+	begin_lng = kwargs['begin_lng']
 	begin_lat = kwargs['begin_lat']
-	end_lnt = kwargs['end_lng']
+	end_lng = kwargs['end_lng']
 	end_lat = kwargs['end_lat']
 	duration = kwargs['duration']
 
 	e = 0.0162
 	kilometers = 6373
 
-	#distance = distance_on_unit_sphere(begin_lat,begin_lnt,end_lat,end_lng) * kilometers
+	#distance = distance_on_unit_sphere(begin_lat,begin_lng,end_lat,end_lng) * kilometers
 
 	# duration is minutes, transform to seconds
 	duration = float(duration) / 1000
 	print 'duration : %d' %duration
 
-	x = float(begin_lnt)
+	x = float(begin_lng)
 	y = float(begin_lat)
 	'''
 	linear equation, not for lng/lat geo
 	'''
 	x1 = x
 	y1 = y
-	x2 = float(end_lnt)
+	x2 = float(end_lng)
 	y2 = float(end_lat)
 	a = (y2 - y1)/(x2-x1)
 	b = (y2*x1-y1*x2)/(x1-x2)

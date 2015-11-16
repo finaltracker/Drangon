@@ -67,8 +67,8 @@ def current_loc(request):
 		data['ball_status'] = ball.ball_status
 		data['current_lng'] = ball.current_lng
 		data['current_lat'] = ball.current_lat
-		data['begin_date'] = ball.date
-		data['end_date'] = ball.end_date
+		data['begin_date'] = ball.date.strftime('%Y-%m-%d %H:%M:%S')
+		data['end_date'] = ball.end_date.strftime('%Y-%m-%d %H:%M:%S')
 		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
@@ -176,11 +176,15 @@ def get_all(request):
 
 		from datetime import datetime
 		if since_date:
-			date_object = datetime.strptime(since_date, '%b %d %Y %I:%M%p')
+			date_object = datetime.strptime(since_date, '%Y-%m-%d %H:%M:%S')
 		else:
-			date_object = datetime.now()
+			now = datetime.now()
+			date_object = datetime.strptime('%d-%d-%d %d:%d:%d'
+				%(now.year,now.month,now.day,now.hour,now.minute,now.second), '%Y-%m-%d %H:%M:%S')
 
 		ball_objs = []
+
+		require_type = int(require_type)
 		if require_type == 1:
 			balls = Ball.objects.filter(Q(user=my_user)&Q(begin_date_lt=date_object))
 			
@@ -195,8 +199,8 @@ def get_all(request):
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
-					ball_obj['begin_date'] = ball.date
-					ball_obj['end_date'] = ball.end_date
+					ball_obj['begin_date'] = ball.date.strftime('%Y-%m-%d %H:%M:%S')
+					ball_obj['end_date'] = ball.end_date.strftime('%Y-%m-%d %H:%M:%S')
 					ball_objs.append(ball_obj)	
 
 		elif require_type == 2:
@@ -213,13 +217,14 @@ def get_all(request):
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
-					ball_obj['begin_date'] = ball.date
-					ball_obj['end_date'] = ball.end_date
+					ball_obj['begin_date'] = ball.date.strftime('%Y-%m-%d %H:%M:%S')
+					ball_obj['end_date'] = ball.end_date.strftime('%Y-%m-%d %H:%M:%S')
 					ball_objs.append(ball_obj)
 
 		elif require_type == 3:
-			balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user))
-			
+			#balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user))
+			balls = Ball.objects.all()
+			print 'balls have no balls'
 			if balls:
 				for ball in balls:
 					ball_obj = {}
@@ -231,11 +236,12 @@ def get_all(request):
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
-					ball_obj['begin_date'] = ball.date
-					ball_obj['end_date'] = ball.end_date
+					ball_obj['begin_date'] = ball.date.strftime('%Y-%m-%d %H:%M:%S')
+					ball_obj['end_date'] = ball.end_date.strftime('%Y-%m-%d %H:%M:%S')
 					ball_objs.append(ball_obj)
+
 		else:
-			print 'not support'
+			print 'not support'		
 
 		data['status']=0
 		data['moible'] = src_user
