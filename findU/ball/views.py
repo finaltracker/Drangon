@@ -192,7 +192,10 @@ def get_all(request):
 				for ball in balls:
 					ball_obj = {}
 					ball_obj['sender'] = ball.user.username
-					ball_obj['catcher'] = ball.catcher.username
+					if ball.catcher:
+						ball_obj['catcher'] = ball.catcher.username
+					else:
+						ball_obj['catcher'] = 'unknown'
 					ball_obj['ball_id'] = ball.id
 					ball_obj['type'] = ball.ball_type
 					ball_obj['ball_status'] = ball.ball_status
@@ -210,7 +213,10 @@ def get_all(request):
 				for ball in balls:
 					ball_obj = {}
 					ball_obj['sender'] = ball.user.username
-					ball_obj['catcher'] = ball.catcher.username
+					if ball.catcher:
+						ball_obj['catcher'] = ball.catcher.username
+					else:
+						ball_obj['catcher'] = 'unknown'
 					ball_obj['ball_id'] = ball.id
 					ball_obj['type'] = ball.ball_type
 					ball_obj['ball_status'] = ball.ball_status
@@ -229,7 +235,10 @@ def get_all(request):
 				for ball in balls:
 					ball_obj = {}
 					ball_obj['sender'] = ball.user.username
-					ball_obj['catcher'] = ball.catcher.username
+					if ball.catcher:
+						ball_obj['catcher'] = ball.catcher.username
+					else:
+						ball_obj['catcher'] = 'unknown'
 					ball_obj['ball_id'] = ball.id
 					ball_obj['type'] = ball.ball_type
 					ball_obj['ball_status'] = ball.ball_status
