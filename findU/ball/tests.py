@@ -68,12 +68,10 @@ class ballTests(TestCase):
 
 	def test_get_all(self):
 		from datetime import datetime
-		now = datetime.now()
 		json_data = {
 			'mobile': '13636630387',
 			"require_type": 3,
-			"since_date": '%d-%d-%d %d:%d:%d'
-			%(now.year,now.month,now.day,now.hour,now.minute,now.second)
+			"since_date": time.mktime(datetime.utcnow().timetuple())
 		}
 
 		response = self.client.post(reverse('ball:get_all'), json_data)
