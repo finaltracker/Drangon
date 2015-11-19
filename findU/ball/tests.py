@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 import json
 import logging
 import time
+import pytz
 
 class ballTests(TestCase):
 
@@ -40,8 +41,7 @@ class ballTests(TestCase):
 		response = self.client.post(reverse('ball:start'), json_data)
 
 		#self.assertEqual(response.content, "ok")
-
-
+	
 	def test_locate_get(self):
 		#time.sleep(15)
 		json_data = {
@@ -55,7 +55,7 @@ class ballTests(TestCase):
 		response = self.client.post(reverse('ball:locate_get'), json_data)
 
 		self.assertEqual(response.content, "ok")
-
+	
 	def test_current_loc(self):
 		json_data = {
 			'mobile': '13636630387',
@@ -71,10 +71,11 @@ class ballTests(TestCase):
 		json_data = {
 			'mobile': '13636630387',
 			"require_type": 3,
-			"since_date": time.mktime(datetime.utcnow().timetuple())
+			#"since_date": time.mktime(timezone.now().timetuple())
 		}
 
 		response = self.client.post(reverse('ball:get_all'), json_data)
 
-		self.assertEqual(response.content, "ok")		
+		self.assertEqual(response.content, "ok")
+
 

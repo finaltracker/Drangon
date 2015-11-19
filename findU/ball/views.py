@@ -7,6 +7,9 @@ import logging
 from utils.pack_json import toJSON
 from ball.tasks import ball_track
 from django.db.models import Q
+from django.utils import timezone
+
+import pytz
 
 logger = logging.getLogger(__name__)
 
@@ -178,9 +181,10 @@ def get_all(request):
 		if since_date:
 			# For test
 			#date_object = datetime.strptime(since_date, '%Y-%m-%d %H:%M:%S')
-			date_object = datetime.utcfromtimestamp(float(since_date))
+			tz = pytz.timezone('Asia/Shanghai')
+			date_object = datetime.fromtimestamp(float(since_date),)
 		else:
-			date_object = datetime.utcnow()
+			date_object = timezone.now()
 			'''
 			date_object = datetime.strptime('%d-%d-%d %d:%d:%d'
 				%(now.year,now.month,now.day,now.hour,now.minute,now.second), '%Y-%m-%d %H:%M:%S')
