@@ -106,7 +106,7 @@ def locate_get(request):
 				& Q(current_lat__lt=lat+distance_scale_lat*distance)
 				& Q(current_lat__gt=lat-distance_scale_lat*distance)
 				& ~Q(user=my_user)
-				& Q(ball_status=0))
+				& Q(ball_status=0)).order_by('date')
 
 			if balls:
 				for ball in balls:
@@ -121,7 +121,7 @@ def locate_get(request):
 
 		elif mask==2:
 			my_user=User.objects.get(username=src_user)
-			balls = Ball.objects.filter(user=my_user).filter(ball_status=0)
+			balls = Ball.objects.filter(user=my_user).filter(ball_status=0).order_by('date')
 
 			if balls:
 				for ball in balls:
@@ -139,7 +139,7 @@ def locate_get(request):
 			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
 				& Q(current_lng__gt=lng-distance_scale_lng*distance)
 				& Q(current_lat__lt=lat+distance_scale_lat*distance)
-				& Q(current_lat__gt=lat-distance_scale_lat*distance)).filter(ball_status=0)
+				& Q(current_lat__gt=lat-distance_scale_lat*distance)).filter(ball_status=0).order_by('date')
 
 			if balls:
 				print 'got.'
@@ -179,10 +179,11 @@ def get_all(request):
 
 		from datetime import datetime
 		if since_date:
-			# For test
-			#date_object = datetime.strptime(since_date, '%Y-%m-%d %H:%M:%S')
+			from dateutil.parser import parse
 			tz = pytz.timezone('Asia/Shanghai')
-			date_object = datetime.fromtimestamp(float(since_date),tz)
+			#date_object = datetime.fromtimestamp(float(since_date),tz)
+			date_object = parse(since_date)
+			date_object = date_object.astimezone(tz)
 			
 		else:
 			date_object = timezone.now()
@@ -192,11 +193,11 @@ def get_all(request):
 			'''
 
 		ball_objs = []
-		ball_received_objs = []
 
 		require_type = int(require_type)
 		if require_type == 1:
-			balls = Ball.objects.filter(Q(user=my_user)&Q(date__lt=date_object))
+			balls = Ball.objects.filter(Q(user=my_user)
+				&Q(date__lt=date_object)).order_by('date')
 			
 			if balls:
 				for ball in balls[0:10]:
@@ -217,10 +218,11 @@ def get_all(request):
 					ball_objs.append(ball_obj)	
 
 		elif require_type == 2:
-			receivedBalls = Ball.objects.filter(Q(catcher=my_user)&Q(end_date__lt=date_object))
+			balls = Ball.objects.filter(Q(catcher=my_user)
+				&Q(end_date__lt=date_object)).order_by('date')
 
-			if receivedBalls:
-				for ball in receivedBalls[0:10]:
+			if balls:
+				for ball in balls[0:10]:
 					ball_obj = {}
 					ball_obj['sender'] = ball.user.username
 					if ball.catcher:
@@ -235,10 +237,12 @@ def get_all(request):
 					ball_obj['current_lat'] = ball.current_lat
 					ball_obj['begin_date'] = str(ball.date)
 					ball_obj['end_date'] = str(ball.end_date)
-					ball_received_objs.append(ball_obj)
+					balls.append(ball_obj)
 
 		elif require_type == 3:
-			balls = Ball.objects.filter(Q(user=my_user)&Q(date__lt=date_object))
+			balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user)
+				&Q(date__lt=date_object)).order_by('date')
+
 			if balls:
 				for ball in balls[0:10]:
 					ball_obj = {}
@@ -256,32 +260,12 @@ def get_all(request):
 					ball_obj['begin_date'] = str(ball.date)
 					ball_obj['end_date'] = str(ball.end_date)
 					ball_objs.append(ball_obj)
-
-			receivedBalls = Ball.objects.filter(Q(catcher=my_user)&Q(end_date__lt=date_object))					
-			if receivedBalls:
-				for ball in receivedBalls[0:10]:
-					ball_obj = {}
-					ball_obj['sender'] = ball.user.username
-					if ball.catcher:
-						ball_obj['catcher'] = ball.catcher.username
-					else:
-						ball_obj['catcher'] = 'unknown'
-					ball_obj['ball_id'] = ball.id
-					ball_obj['type'] = ball.ball_type
-					ball_obj['ball_status'] = ball.ball_status
-					ball_obj['content'] = ball.ball_content
-					ball_obj['current_lng'] = ball.current_lng
-					ball_obj['current_lat'] = ball.current_lat
-					ball_obj['begin_date'] = str(ball.date)
-					ball_obj['end_date'] = str(ball.end_date)
-					ball_received_objs.append(ball_obj)
 		else:
 			print 'not support'		
 
 		data['status']=0
 		data['moible'] = src_user
 		data['balls'] = ball_objs
-		data['received_balls'] = ball_received_objs
 		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503

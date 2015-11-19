@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+import pytz
 
 class Ball(models.Model):
 	user = models.ForeignKey(User)
@@ -19,6 +20,10 @@ class Ball(models.Model):
 	end_date = models.DateTimeField(auto_now=True)
 
 	def save(self, *args, **kwargs):
+
+		#tz = pytz.timezone('Asia/Shanghai')
 		#self.date = timezone.now()
 		#self.end_date = timezone.now()
+		#self.end_date = self.end_date.astimezone(tz)
+
 		super(Ball, self).save(*args, **kwargs)
