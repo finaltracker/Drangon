@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Ball(models.Model):
 	user = models.ForeignKey(User)
@@ -16,3 +17,8 @@ class Ball(models.Model):
 	demange_score = models.IntegerField(default=0)
 	reward_score = models.IntegerField(default=0)
 	end_date = models.DateTimeField(auto_now=True)
+
+	def save(self, *args, **kwargs):
+		#self.date = timezone.now()
+		#self.end_date = timezone.now()
+		super(Ball, self).save(*args, **kwargs)
