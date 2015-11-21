@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def start(request):
 	data = {}
-	if request.method=='POST':		
+	if request.method=='POST':
 		logger.debug(str(request.POST))
 
 		src_user=request.POST.get('mobile')
@@ -26,7 +26,7 @@ def start(request):
 		end_lat=request.POST.get('end_lat')
 		begin_lng=request.POST.get('begin_lng')
 		begin_lat=request.POST.get('begin_lat')
-		
+
 		my_user=User.objects.get(username=src_user)
 		ball = Ball(user=my_user)
 		ball.duration = duration
@@ -56,7 +56,7 @@ def start(request):
 
 def current_loc(request):
 	data = {}
-	if request.method=='POST':		
+	if request.method=='POST':
 		logger.debug(str(request.POST))
 
 		src_user=request.POST.get('mobile')
@@ -79,7 +79,7 @@ def current_loc(request):
 
 def locate_get(request):
 	data = {}
-	if request.method=='POST':		
+	if request.method=='POST':
 		logger.debug(str(request.POST))
 
 		src_user=request.POST.get('mobile')
@@ -98,7 +98,7 @@ def locate_get(request):
 		lng = float(lng)
 		lat = float(lat)
 
-		if mask==1:	
+		if mask==1:
 			my_user=User.objects.get(username=src_user)
 
 			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
@@ -117,7 +117,7 @@ def locate_get(request):
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
-					ball_objs.append(ball_obj)			
+					ball_objs.append(ball_obj)
 
 		elif mask==2:
 			my_user=User.objects.get(username=src_user)
@@ -134,12 +134,13 @@ def locate_get(request):
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
 					ball_objs.append(ball_obj)
-					
-		elif mask==3:											
+
+		elif mask==3:
 			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
 				& Q(current_lng__gt=lng-distance_scale_lng*distance)
 				& Q(current_lat__lt=lat+distance_scale_lat*distance)
-				& Q(current_lat__gt=lat-distance_scale_lat*distance)).filter(ball_status=0).order_by('date')
+				& Q(current_lat__gt=lat-distance_scale_lat*distance))
+				.filter(ball_status=0).order_by('date')
 
 			if balls:
 				print 'got.'
@@ -156,7 +157,7 @@ def locate_get(request):
 				print 'nothing.'
 
 		else:
-			print 'not support!!'		
+			print 'not support!!'
 
 		data['status']=0
 		data['moible'] = src_user
@@ -184,7 +185,7 @@ def get_all(request):
 			#date_object = datetime.fromtimestamp(float(since_date),tz)
 			date_object = parse(since_date)
 			date_object = date_object.astimezone(tz)
-			
+
 		else:
 			date_object = timezone.now()
 			'''
@@ -198,7 +199,7 @@ def get_all(request):
 		if require_type == 1:
 			balls = Ball.objects.filter(Q(user=my_user)
 				&Q(date__lt=date_object)).order_by('date')
-			
+
 			if balls:
 				for ball in balls[0:10]:
 					ball_obj = {}
@@ -213,9 +214,9 @@ def get_all(request):
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
-					ball_obj['begin_date'] = str(ball.date)
-					ball_obj['end_date'] = str(ball.end_date)
-					ball_objs.append(ball_obj)	
+					ball_obj['begin_date'] = str(ball.get_date())
+					ball_obj['end_date'] = str(ball.get_end_date())
+					ball_objs.append(ball_obj)
 
 		elif require_type == 2:
 			balls = Ball.objects.filter(Q(catcher=my_user)
@@ -235,13 +236,15 @@ def get_all(request):
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
-					ball_obj['begin_date'] = str(ball.date)
-					ball_obj['end_date'] = str(ball.end_date)
+					ball_obj['begin_date'] = str(ball.get_date())
+					ball_obj['end_date'] = str(ball.get_end_date())
 					balls.append(ball_obj)
 
 		elif require_type == 3:
-			balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user)
-				&Q(date__lt=date_object)).order_by('date')
+			balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user))\
+				.filter(Q(date__lt=date_object)).order_by('date')
+
+			#import pdb; pdb.set_trace()
 
 			if balls:
 				for ball in balls[0:10]:
@@ -257,11 +260,11 @@ def get_all(request):
 					ball_obj['content'] = ball.ball_content
 					ball_obj['current_lng'] = ball.current_lng
 					ball_obj['current_lat'] = ball.current_lat
-					ball_obj['begin_date'] = str(ball.date)
-					ball_obj['end_date'] = str(ball.end_date)
+					ball_obj['begin_date'] = str(ball.get_date())
+					ball_obj['end_date'] = str(ball.get_end_date())
 					ball_objs.append(ball_obj)
 		else:
-			print 'not support'		
+			print 'not support'
 
 		data['status']=0
 		data['moible'] = src_user
@@ -269,4 +272,4 @@ def get_all(request):
 		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
-	return HttpResponse(toJSON(data),content_type='application/json')				
+	return HttpResponse(toJSON(data),content_type='application/json')

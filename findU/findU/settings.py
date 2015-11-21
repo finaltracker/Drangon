@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'user',
     'friend',
     'tips',
@@ -51,7 +51,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -115,11 +115,11 @@ LOGGING = {
         'user': {
             'handlers': ['file'],
             'level': 'DEBUG'
-        }, 
+        },
         'friend': {
             'handlers': ['file'],
             'level': 'DEBUG'
-        },  
+        },
         'tips': {
             'handlers': ['file'],
             'level': 'DEBUG'
@@ -127,10 +127,10 @@ LOGGING = {
         'feed': {
             'handlers': ['file'],
             'level': 'DEBUG'
-        },          
+        },
         'ball': {
             'handlers': ['file'],
             'level': 'DEBUG'
-        },                               
+        },
     },
 }

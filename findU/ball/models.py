@@ -7,6 +7,7 @@ class Ball(models.Model):
 	user = models.ForeignKey(User)
 	catcher = models.ForeignKey(User, null=True, related_name='catcher')
 	date = models.DateTimeField(auto_now_add=True)
+	#date = models.DateTimeField(default=timezone.now)
 	ball_type = models.IntegerField(default=0)
 	ball_status = models.IntegerField(default=0)
 	ball_content = models.CharField(max_length=140)
@@ -27,3 +28,13 @@ class Ball(models.Model):
 		#self.end_date = self.end_date.astimezone(tz)
 
 		super(Ball, self).save(*args, **kwargs)
+
+	def get_date(self):
+		tz = pytz.timezone('Asia/Shanghai')
+		self.date = self.date.astimezone(tz)
+		return self.date
+
+	def get_end_date(self):
+		tz = pytz.timezone('Asia/Shanghai')
+		self.end_date = self.end_date.astimezone(tz)
+		return self.end_date

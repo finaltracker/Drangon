@@ -21,9 +21,18 @@ class ballTests(TestCase):
 		user_2 = User.objects.create(username='13636630387')
 		user_info_2 = UserInfo.objects.create(user=user_2, nickname='test 02')
 
+		date_1 = timezone.now() - timezone.timedelta(days = 1)
+		date_2 = timezone.now() + timezone.timedelta(days = 1)
+		date_3 = timezone.now() + timezone.timedelta(days = 2)
 		ball_1 = Ball.objects.create(user=user_2,ball_type=1,ball_content='boo',
 			duration=22,current_lat=31.2477310000,current_lng=121.6405930000,
-			end_lat=31.1993100000,end_lng=121.6451920000)
+			end_lat=31.1993100000,end_lng=121.6451920000, date=date_1)
+		ball_2 = Ball.objects.create(user=user_2,ball_type=1,ball_content='foo',
+			duration=13,current_lat=48.2477310000,current_lng=123.6405930000,
+			end_lat=76.1993100000,end_lng=127.6451920000, date=date_2)
+		ball_3 = Ball.objects.create(user=user_2,ball_type=1,ball_content='zoo',
+			duration=7,current_lat=40.2477310000,current_lng=23.6405930000,
+			end_lat=36.1993100000,end_lng=27.6451920000, date=date_3)
 		#self.start()
 
 	def start(self):
@@ -41,25 +50,25 @@ class ballTests(TestCase):
 		response = self.client.post(reverse('ball:start'), json_data)
 
 		#self.assertEqual(response.content, "ok")
-	
+
 	def test_locate_get(self):
 		#time.sleep(15)
 		json_data = {
 			'mobile': '13636630387',
 			"mask": 3,
 			"lat":31.229977,
-			"lng":121.642279,	
-			"distance": 100,		
+			"lng":121.642279,
+			"distance": 100,
 		}
 
 		response = self.client.post(reverse('ball:locate_get'), json_data)
 
 		self.assertEqual(response.content, "ok")
-	
+
 	def test_current_loc(self):
 		json_data = {
 			'mobile': '13636630387',
-			"ball_id": 1,	
+			"ball_id": 1,
 		}
 
 		response = self.client.post(reverse('ball:current_loc'), json_data)
@@ -77,5 +86,3 @@ class ballTests(TestCase):
 		response = self.client.post(reverse('ball:get_all'), json_data)
 
 		self.assertEqual(response.content, "ok")
-
-
