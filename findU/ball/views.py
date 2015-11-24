@@ -70,8 +70,8 @@ def current_loc(request):
 		data['ball_status'] = ball.ball_status
 		data['current_lng'] = ball.current_lng
 		data['current_lat'] = ball.current_lat
-		data['begin_date'] = str(ball.date)
-		data['end_date'] = str(ball.end_date)
+		data['begin_date'] = str(ball.get_date())
+		data['end_date'] = str(ball.get_end_date())
 		return HttpResponse(toJSON(data),content_type='application/json')
 
 	data['status']=503
@@ -139,8 +139,7 @@ def locate_get(request):
 			balls = Ball.objects.filter(Q(current_lng__lt=lng+distance_scale_lng*distance)
 				& Q(current_lng__gt=lng-distance_scale_lng*distance)
 				& Q(current_lat__lt=lat+distance_scale_lat*distance)
-				& Q(current_lat__gt=lat-distance_scale_lat*distance))
-				.filter(ball_status=0).order_by('date')
+				& Q(current_lat__gt=lat-distance_scale_lat*distance)).filter(ball_status=0).order_by('date')
 
 			if balls:
 				print 'got.'
@@ -181,17 +180,15 @@ def get_all(request):
 		from datetime import datetime
 		if since_date:
 			from dateutil.parser import parse
-			tz = pytz.timezone('Asia/Shanghai')
+			tz = pytz.timezone('UTC')
 			#date_object = datetime.fromtimestamp(float(since_date),tz)
 			date_object = parse(since_date)
 			date_object = date_object.astimezone(tz)
 
 		else:
 			date_object = timezone.now()
-			'''
-			date_object = datetime.strptime('%d-%d-%d %d:%d:%d'
-				%(now.year,now.month,now.day,now.hour,now.minute,now.second), '%Y-%m-%d %H:%M:%S')
-			'''
+
+		print "the since date : %s" %(str(date_object))
 
 		ball_objs = []
 
@@ -242,7 +239,7 @@ def get_all(request):
 
 		elif require_type == 3:
 			balls = Ball.objects.filter(Q(user=my_user)|Q(catcher=my_user))\
-				.filter(Q(date__lt=date_object)).order_by('date')
+				.filter(Q(date__lt=date_object)).order_by('-date')
 
 			#import pdb; pdb.set_trace()
 

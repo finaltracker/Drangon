@@ -6,8 +6,8 @@ import pytz
 class Ball(models.Model):
 	user = models.ForeignKey(User)
 	catcher = models.ForeignKey(User, null=True, related_name='catcher')
-	date = models.DateTimeField(auto_now_add=True)
-	#date = models.DateTimeField(default=timezone.now)
+	#date = models.DateTimeField(auto_now_add=True)
+	date = models.DateTimeField(default=timezone.now)
 	ball_type = models.IntegerField(default=0)
 	ball_status = models.IntegerField(default=0)
 	ball_content = models.CharField(max_length=140)
@@ -18,14 +18,12 @@ class Ball(models.Model):
 	current_lng = models.FloatField(default=0,db_index=True)
 	demange_score = models.IntegerField(default=0)
 	reward_score = models.IntegerField(default=0)
-	end_date = models.DateTimeField(auto_now=True)
+	#end_date = models.DateTimeField(auto_now=True)
+	end_date = models.DateTimeField(default=timezone.now)
 
 	def save(self, *args, **kwargs):
 
-		#tz = pytz.timezone('Asia/Shanghai')
-		#self.date = timezone.now()
-		#self.end_date = timezone.now()
-		#self.end_date = self.end_date.astimezone(tz)
+		self.end_date = timezone.now()
 
 		super(Ball, self).save(*args, **kwargs)
 

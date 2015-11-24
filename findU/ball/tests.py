@@ -80,7 +80,7 @@ class ballTests(TestCase):
 		json_data = {
 			'mobile': '13636630387',
 			"require_type": 3,
-			"since_date": str(timezone.now())
+			#"since_date": str(timezone.now())
 		}
 
 		response = self.client.post(reverse('ball:get_all'), json_data)
