@@ -84,6 +84,8 @@ DATABASES = {
     }    
 }
 
+#DATABASE_ROUTERS = ['ball.route.DeployRouter']
+
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
 
