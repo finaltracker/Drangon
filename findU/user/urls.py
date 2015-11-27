@@ -7,4 +7,5 @@ urlpatterns=patterns('',
 	url(r'^check_register/$',views.check_register,name='check_register'),
 	url(r'^upload_avatar/$',views.upload_avatar,name='upload_avatar'),
 	url(r'^download_avatar/$',views.download_avatar,name='download_avatar'),
+	url(r'^delete_user/$',views.delete_user,name='delete_user'),	
 	)

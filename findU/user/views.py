@@ -154,4 +154,30 @@ def download_avatar(request):
 	logger.debug("image name : "+str(image_name))
 	if(image_name != None):
 		image_data = open('%s/%s' % (settings.MEDIA_ROOT , str(image_name)), "rb").read()
-	return HttpResponse(image_data, content_type="image/png")	
+	return HttpResponse(image_data, content_type="image/png")
+
+from feed.models import PosInfo
+def delete_user(request):
+	data = {}
+	if request.method == 'POST':		
+		logger.debug(str(request.POST))
+		mobile = request.POST.get('mobile' )
+		password = request.POST.get('password')
+		# check whether mobile is true user or not
+		try:
+			user = User.objects.get(username = mobile,password = password)
+		except ObjectDoesNotExist:
+			data['status']=303
+			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+
+		logger.debug("user check pass")
+
+		user = User.objects.get(username=mobile)
+		locations = PosInfo.objects.filter(user=user)
+		if locations:
+			for location in locations:
+				location.delete()
+		user.delete()
+
+		data['status']=0
+		return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')		
