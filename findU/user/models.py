@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
+import pytz
 
-
-# Create your models here.
 #用户信息表
 class UserInfo(models.Model):
 	user=models.OneToOneField(User)
@@ -13,6 +12,8 @@ class UserInfo(models.Model):
 	avatar=models.ImageField(upload_to='avatar')
 	version_count = models.IntegerField(default=0)
 	score = models.IntegerField(default=1000)
+	# 1: for robot 2: for animal
+	category = models.IntegerField(default=0)
 	reserved=models.CharField(max_length=140)
 
 	def avatar_url(self):
@@ -20,3 +21,12 @@ class UserInfo(models.Model):
 			return self.avatar.url
 		else:
 			return 'avatar/ic_launcher.png'
+
+class LoginInfo(models.Model):
+	user=models.ForeignKey(User)
+	date=models.DateTimeField(auto_now_add=True)
+
+	def get_date(self):
+		tz = pytz.timezone('Asia/Shanghai')
+		self.date = self.date.astimezone(tz)
+		return self.date	

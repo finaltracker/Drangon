@@ -79,7 +79,20 @@ def login(request):
 		user = User.objects.filter(username = mobile,password = password)
 
 		if user:
-			logger.debug("user is exist!!")
+			logger.debug("user login success!!")
+			# login reward, prevent frequently login!
+			logininfo = LoginInfo(user=user)
+			logininfo.save()
+			today = timezone.now()
+			today = today-timedelta(hours=today.hour, minutes=today.minute, seconds=today.second)
+			todaylogin = LoginInfo.objects.filter(user=user).filter(date__gt=today)
+			if len(todaylogin)>1:
+				logger.debug("skip reward!!")
+			else:
+				userinfo = UserInfo.objects.get(user=user)
+				userinfo.score += 10
+				UserInfo.save()
+
 			data['status']=0
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
     

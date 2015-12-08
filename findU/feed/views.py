@@ -101,3 +101,48 @@ def locate_upload(request):
 
 	data['status']=503
 	return HttpResponse(toJSON(data),content_type='application/json')
+
+def area_scan(request):
+	data = {}
+	if request.method=='POST':
+		logger.debug(str(request.POST))
+
+		src_user=request.POST.get('mobile')
+		lng=request.POST.get('lng')
+		lat=request.POST.get('lat')
+		#distance=request.POST.get('distance')
+
+		distance_scale_lng = 0.0162
+		distance_scale_lat = 0.09
+
+		robot_objs = []
+
+		mask = int(mask)
+		# default: 1 mile
+		distance = 1000 
+		lng = float(lng)
+		lat = float(lat)
+
+
+		my_user=User.objects.get(username=src_user)
+
+		feeds = PosInfo.objects.filter(Q(lng__lt=lng+distance_scale_lng*distance)
+			& Q(lng__gt=lng-distance_scale_lng*distance)
+			& Q(lat__lt=lat+distance_scale_lat*distance)
+			& Q(lat__gt=lat-distance_scale_lat*distance)).order_by('date')
+
+		if feeds:
+			for feed in feeds:
+				user = feed.user
+				userinfo = UserInfo.objects.get(user=user)
+				if userinfo.category > 0:
+					robot_obj = {}
+					robot_obj['user'] = user.username
+					robot_obj['current_lng'] = feed.lng
+					robot_obj['current_lat'] = feed.lat
+					robot_objs.append(robot_obj)
+
+		data['status']=0
+		data['moible'] = src_user
+		data['robots'] = robot_objs
+		return HttpResponse(toJSON(data),content_type='application/json')
