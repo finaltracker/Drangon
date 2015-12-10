@@ -11,7 +11,7 @@ class UserInfo(models.Model):
 	imsi=models.CharField(max_length=32,blank=True)
 	avatar=models.ImageField(upload_to='avatar')
 	version_count = models.IntegerField(default=0)
-	score = models.IntegerField(default=1000)
+	score = models.IntegerField(default=1000,null=True)
 	# 1: for robot 2: for animal
 	category = models.IntegerField(default=0)
 	reserved=models.CharField(max_length=140)

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from feed.models import PosInfo
+from user.models import UserInfo
 import time
 from django.utils import timezone
 import json
@@ -14,6 +15,27 @@ from utils.pack_json import toJSON
 threshold = 0.5
 
 logger = logging.getLogger(__name__)
+
+def all_position(request):
+	data = {}
+
+	feeds = []
+	users = User.objects.exclude(username='root')
+	if users:
+		for user in users:
+			userinfo = UserInfo.objects.get(user=user)
+			if userinfo.category == 0:
+				feed = PosInfo.objects.get(user=user)
+				posinfo = {}
+				posinfo['name'] = user.username
+				posinfo['lat'] = feed.lat
+				posinfo['lng'] = feed.lng
+
+				feeds.append(posinfo)
+
+	data['status'] = 0
+	data['feeds'] = feeds
+	return HttpResponse(toJSON(data),content_type='application/json')
 
 def locate_get(request):
 	data = {}
@@ -102,7 +124,7 @@ def locate_upload(request):
 	data['status']=503
 	return HttpResponse(toJSON(data),content_type='application/json')
 
-def area_scan(request):
+def robot_scan(request):
 	data = {}
 	if request.method=='POST':
 		logger.debug(str(request.POST))
