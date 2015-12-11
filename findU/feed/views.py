@@ -163,6 +163,7 @@ def robot_scan(request):
 					robot_obj['user'] = user.username
 					robot_obj['current_lng'] = feed.lng
 					robot_obj['current_lat'] = feed.lat
+					robot_obj['avatar_url'] = '/media/avatar/ic_launcher.png'
 					robot_objs.append(robot_obj)
 
 		else:
