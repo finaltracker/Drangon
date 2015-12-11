@@ -14,6 +14,15 @@ def register(index):
     r = requests.post("http://localhost:8000/user/register2/", data)
     print r.text
 
+def unRegister(index):
+    data = {
+            'mobile': str(index),
+            'password': "123456",
+    }
+
+    r = requests.post("http://localhost:8000/user/delete_user/", data)
+    print r.text
+
 def fixPosition(index, lat, lng):
     e = 0.016
     data = {
@@ -41,13 +50,22 @@ def getAllPosition():
 '''
 if __name__ == '__main__':
     print 'robot start'
-    print 'set the robot number'
+    print 'input 1 for creating robot, 2 for deleting robot'
 
     prestore = getAllPosition()
+    robot_num = len(prestore)
+    cmd_opt = input("enter:")
+    if cmd_opt == 1:
+        for i in range(robot_num):
+            print i
+            register(i)
+            fixPosition(i,prestore[i]['lat'], prestore[i]['lng'])
 
-    for i in range(len(prestore)):
-        print i
-        register(i)
-        fixPosition(i,prestore[i]['lat'], prestore[i]['lng'])
+            time.sleep(3)
 
-        time.sleep(3)
+    if cmd_opt == 2:
+        for i in range(robot_num):
+            unRegister(i)
+            time.sleep(3)
+
+    print 'success!'
