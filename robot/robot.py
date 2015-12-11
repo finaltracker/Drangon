@@ -11,7 +11,7 @@ def register(index):
             'nick_name': str(index)
     }
 
-    r = requests.post("http://localhost:8000/user/register2/", data)
+    r = requests.post("http://localhost/user/register2/", data)
     print r.text
 
 def unRegister(index):
@@ -20,7 +20,7 @@ def unRegister(index):
             'password': "123456",
     }
 
-    r = requests.post("http://localhost:8000/user/delete_user/", data)
+    r = requests.post("http://localhost/user/delete_user/", data)
     print r.text
 
 def fixPosition(index, lat, lng):
@@ -31,11 +31,11 @@ def fixPosition(index, lat, lng):
             'lng': lng+(e*index),
     }
 
-    r = requests.post("http://localhost:8000/feed/locate_upload/", data)
+    r = requests.post("http://localhost/feed/locate_upload/", data)
     print r.text
 
 def getAllPosition():
-    r = requests.get("http://localhost:8000/feed/all_position/")
+    r = requests.get("http://localhost/feed/all_position/")
     print r.text
 
     data = []

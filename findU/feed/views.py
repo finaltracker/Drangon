@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from feed.models import PosInfo
 from user.models import UserInfo
+from django.db.models import Q
 import time
 from django.utils import timezone
 import json
@@ -25,7 +26,7 @@ def all_position(request):
 		for user in users:
 			userinfo = UserInfo.objects.get(user=user)
 			if userinfo.category == 0:
-				feed = PosInfo.objects.get(user=user)
+				feed = PosInfo.objects.filter(user=user)[0]
 				posinfo = {}
 				posinfo['name'] = user.username
 				posinfo['lat'] = feed.lat
@@ -139,7 +140,6 @@ def robot_scan(request):
 
 		robot_objs = []
 
-		mask = int(mask)
 		# default: 1 mile
 		distance = 1000 
 		lng = float(lng)
@@ -154,6 +154,7 @@ def robot_scan(request):
 			& Q(lat__gt=lat-distance_scale_lat*distance)).order_by('date')
 
 		if feeds:
+			print 'get feeds'
 			for feed in feeds:
 				user = feed.user
 				userinfo = UserInfo.objects.get(user=user)
@@ -163,6 +164,9 @@ def robot_scan(request):
 					robot_obj['current_lng'] = feed.lng
 					robot_obj['current_lat'] = feed.lat
 					robot_objs.append(robot_obj)
+
+		else:
+			print 'no feeds'
 
 		data['status']=0
 		data['moible'] = src_user
