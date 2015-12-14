@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from user.models import UserInfo
+from user.models import LoginInfo
 from django.conf import settings
 from django.core.urlresolvers import reverse
 import logging
@@ -76,22 +77,39 @@ def login(request):
 		# password=make_password(password)
 		logger.debug("[Login]:"+str(mobile)+" / "+str(password))
 
-		user = User.objects.filter(username = mobile,password = password)
+		myUser = User.objects.get(username = mobile,password = password)
 
-		if user:
+		if myUser:
 			logger.debug("user login success!!")
 			# login reward, prevent frequently login!
-			logininfo = LoginInfo(user=user)
+			logininfo = LoginInfo(user=myUser)
 			logininfo.save()
 			today = timezone.now()
+
+			from datetime import timedelta
 			today = today-timedelta(hours=today.hour, minutes=today.minute, seconds=today.second)
-			todaylogin = LoginInfo.objects.filter(user=user).filter(date__gt=today)
+			todaylogin = LoginInfo.objects.filter(user=myUser).filter(date__gt=today)
 			if len(todaylogin)>1:
 				logger.debug("skip reward!!")
 			else:
-				userinfo = UserInfo.objects.get(user=user)
-				userinfo.score += 10
-				UserInfo.save()
+				countLogin = 1
+
+				for i in range(6):
+					min_date = today-timedelta(days=(1+i))
+					max_date = today-timedelta(days=i)
+					isLogin = LoginInfo.objects.filter(user=myUser).filter(date__gt=min_date).filter(date__lt=max_date)
+					if len(isLogin) > 1:
+						countLogin += i
+					else:
+						break
+
+				userinfo = UserInfo.objects.get(user=myUser)
+				userinfo.score += 10 + countLogin*0.1*10
+				userinfo.save()
+
+				data['status']=0
+				data['count'] = countLogin
+				return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')				
 
 			data['status']=0
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')

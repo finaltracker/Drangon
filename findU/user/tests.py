@@ -40,7 +40,7 @@ class userTests(TestCase):
 
 	def test_2_login_with_user(self):
 		json_data = {
-			"mobile": 18601612682,
+			"mobile": 12345993,
 			"password": "123456",
 		}
 	
