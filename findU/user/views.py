@@ -78,6 +78,7 @@ def login(request):
 		logger.debug("[Login]:"+str(mobile)+" / "+str(password))
 
 		myUser = User.objects.get(username = mobile,password = password)
+		countLogin = 0
 
 		if myUser:
 			logger.debug("user login success!!")
@@ -107,11 +108,8 @@ def login(request):
 				userinfo.score += 10 + countLogin*0.1*10
 				userinfo.save()
 
-				data['status']=0
-				data['count'] = countLogin
-				return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')				
-
 			data['status']=0
+			data['count'] = countLogin
 			return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
     
 	data['status']=503
