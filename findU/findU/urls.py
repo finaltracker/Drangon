@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^ball/',include('ball.urls',namespace='ball')),
     url(r'^friend/',include('friend.urls',namespace='friend')),
     url(r'^tips/',include('tips.urls',namespace='tips')),
+    url(r'^duty/',include('duty.urls',namespace='duty')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'tips',
 	'feed',
     'ball',
+    'duty',
     'djcelery',
     'kombu.transport.django',
 )
@@ -104,6 +105,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, "site_media", "media")
+
+# Template files
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, "templates"),
+)
 
 LOGGING = {
     'version': 1,
