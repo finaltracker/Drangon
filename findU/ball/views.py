@@ -54,6 +54,50 @@ def start(request):
 	data['status']=503
 	return HttpResponse(toJSON(data),content_type='application/json')
 
+def startC(request):
+	data = {}
+	if request.method=='POST':
+		logger.debug(str(request.POST))
+
+		src_user=request.POST.get('mobile')
+		ball_type=request.POST.get('type')
+		ball_content=request.POST.get('content')
+		duration=request.POST.get('duration')
+		end_lng=request.POST.get('end_lng')
+		end_lat=request.POST.get('end_lat')
+		begin_lng=request.POST.get('begin_lng')
+		begin_lat=request.POST.get('begin_lat')
+		#Add copy id for find boss copy
+		copy_id = request.POST.get('copy_id')
+
+		my_user=User.objects.get(username=src_user)
+		ball = Ball(user=my_user)
+		ball.duration = duration
+		print 'ball_type {0}'.format(ball_type)
+		ball.ball_type = ball_type
+		ball.ball_content = ball_content
+		ball.end_lat = end_lat
+		ball.end_lng = end_lng
+		ball.current_lat = begin_lat
+		ball.current_lng = begin_lng
+		ball.save()
+
+		'''
+		start ball running, if ball hit people, notify two side.
+		if not but get to end, notify two side.
+		'''
+		ball_launch.delay(user=src_user,copy_id=copy_id, ball_id=ball.id, duration=duration,
+			end_lat=end_lat,end_lng=end_lng,begin_lng=begin_lng,begin_lat=begin_lat)
+
+		data['status']=0
+		data['moible'] = src_user
+		data['ball_id'] = ball.id
+		return HttpResponse(toJSON(data),content_type='application/json')
+
+	data['status']=503
+	return HttpResponse(toJSON(data),content_type='application/json')
+
+
 def current_loc(request):
 	data = {}
 	if request.method=='POST':

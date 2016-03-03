@@ -1,0 +1,16 @@
+{% extends "base/base.html" %}
+
+{% block extrastyle %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <script language="JavaScript" async type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <span>
+      <input id="num_one"> + <input id="num_two"> = <p id="result"></p>
+    </span>
+    <button onclick="calculator(2)">Calculator</button>
+  </div> 
+{% endblock %}
