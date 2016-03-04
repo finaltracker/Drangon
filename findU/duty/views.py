@@ -39,6 +39,5 @@ def copy_enter(request):
 		data['status']=277
 		return HttpResponse(toJSON(data),content_type='application/json')
 
-def reward_dispatch(request):
 
 
