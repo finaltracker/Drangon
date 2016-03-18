@@ -31,6 +31,10 @@ def ball_track(*args, **kwargs):
 	duration = float(duration) / 1000
 	print 'duration : %d' %duration
 
+	# avoid division by zero, set duration to 15 second
+	if duration == 0.0:
+		duration = 15
+
 	x = float(begin_lng)
 	y = float(begin_lat)
 	'''
