@@ -1,13 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from duty.models import BossCopy
+#from duty.models import BossCopy
 import pytz
 
 class Ball(models.Model):
 	user = models.ForeignKey(User)
 	catcher = models.ForeignKey(User, null=True, related_name='catcher')
-	hitter = models.ForeignKey(BossCopy, null=True, related_name='hitter')
+	#hitter = models.ForeignKey(BossCopy, null=True, related_name='hitter')
 	#date = models.DateTimeField(auto_now_add=True)
 	date = models.DateTimeField(default=timezone.now)
 	ball_type = models.IntegerField(default=0)

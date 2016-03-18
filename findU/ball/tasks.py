@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from friend.models import Friend
 from feed.models import PosInfo
 from ball.models import Ball
-from duty.models import BossCopy, DamageRecord
+from duty.models import DamageRecord
 from utils.pack_jpush import jpush_send_message
 from utils.path_calc import distance_on_unit_sphere
 import math
@@ -201,7 +201,7 @@ def ball_launch(*args, **kwargs):
 	i = 1
 
 	my_user=User.objects.get(username=user)
-	boss = BossCopy.objects.get(pk=copy)
+	boss = UserInfo.objects.get(pk=copy)
 	if(boss):
 		print 'boss aho'
 	else:
@@ -240,17 +240,17 @@ def ball_launch(*args, **kwargs):
 				boss.life_value -= 100
 				boss.save()
 
-				damage = DamageRecord(boss=copy, user=my_user, ball=ball, damage=100, last_point=0)
+				damage = DamageRecord(boss=boss, user=my_user, ball=ball, damage=100, last_point=0)
 				damage.save()
 			else:
 				damage_value = boss.life_value
 				boss.life_value = 0
 				boss.save()
 
-				damage = DamageRecord(boss=copy, user=my_user, ball=ball, damage=damage_value, last_point=1)
+				damage = DamageRecord(boss=boss, user=my_user, ball=ball, damage=damage_value, last_point=1)
 				damage.save()
 
-				records = DamageRecord.objects.get(boss=copy)
+				records = DamageRecord.objects.get(boss=boss)
 				for record in records:
 					user = record.user
 					friend_info = UserInfo.objects.get(user=user)
@@ -267,7 +267,7 @@ def ball_launch(*args, **kwargs):
 					jpush_send_message(str(push_data),push_target, 286)
 
 			# task has finished, so return
-			ball.hitter = copy
+			ball.catcher = boss
 			# hardcode here
 			ball.demange_score = 100
 			ball.reward_score = 300
@@ -295,7 +295,7 @@ def ball_launch(*args, **kwargs):
 	push_target = owner_info.imsi
 	push_data = {}
 	push_data['sender']=str(my_user.username)
-	push_data['receiver']=str(copy.desc)
+	push_data['receiver']=str(boss.username)
 	push_data['end_lat']=end_lat
 	push_data['end_lng']=end_lng
 	push_data['ball_id']=ball_id
