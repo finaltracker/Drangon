@@ -185,7 +185,14 @@ def download_avatar(request):
 		image_data = open('%s/%s' % (settings.MEDIA_ROOT , str(image_name)), "rb").read()
 	return HttpResponse(image_data, content_type="image/png")
 
-
+def get_score(request):
+	mobile = request.POST.get('mobile')
+	client = User.objects.get(username=mobile)
+	user_info = UserInfo.objects.get(user = client)
+	data['status'] = 0
+	data['score'] = user_info.score
+	return HttpResponse(json.dumps(data,ensure_ascii=False),content_type='application/json')
+	
 def delete_user(request):
 	data = {}
 	if request.method == 'POST':		
