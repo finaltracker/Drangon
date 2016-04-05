@@ -14,10 +14,10 @@ def check_out(request):
 
 def boss_create(request):
 	mobile = request.POST.get('mobile')
-    password = request.POST.get('password')
-    confirmpass = request.POST.get('confirmpass')
-    imsi = request.POST.get('imsi')
-    nick_name = request.POST.get('nick_name')
+    	password = request.POST.get('password')
+    	confirmpass = request.POST.get('confirmpass')
+    	imsi = request.POST.get('imsi')
+    	nick_name = request.POST.get('nick_name')
 	lat = request.POST.get('lat')
 	lng = request.POST.get('lng')
 	desc = request.POST.get('desc')
