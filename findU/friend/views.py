@@ -40,7 +40,7 @@ def add_friend(request):
 			add_client_info = UserInfo.objects.get(user=add_client)
 				
 			try:
-				check_friend = Friend.objects.get(user=add_client, friend=client)
+				check_friend = Friend.objects.get(user=add_client, friend=client, verify_status=1)
 			
 				current_version = user_info.version_count
 				logger.debug("friend already add, skip it")
@@ -57,7 +57,7 @@ def add_friend(request):
 				add_client_info.save()
 
 				push_target = add_client_info.imsi
-				
+
 				logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
 				jpush_send_message(str(mobile),push_target, 202)
 
