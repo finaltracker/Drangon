@@ -58,6 +58,7 @@ def add_friend(request):
 
 				push_target = add_client_info.imsi
 				
+				logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
 				jpush_send_message(str(mobile),push_target, 202)
 
 			data['status']=0
@@ -163,6 +164,7 @@ def accept_friend(request):
 			to_client_info.save()
 
 			push_target = to_client_info.imsi
+			logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
 			jpush_send_message(str(mobile),push_target, 202)
 
 			data['status']=0

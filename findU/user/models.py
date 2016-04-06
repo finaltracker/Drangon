@@ -18,7 +18,7 @@ class UserInfo(models.Model):
 	reserved=models.CharField(max_length=140)
 
 	date = models.DateTimeField(auto_now_add=True,default=timezone.now)
-	desc = models.CharField(max_length=140)
+	desc = models.CharField(max_length=140,blank=True)
 	tempo = models.IntegerField(default=0)
 	reward = models.IntegerField(default=0)
 	life_value = models.IntegerField(default=0)
