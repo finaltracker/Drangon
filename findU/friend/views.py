@@ -149,11 +149,16 @@ def accept_friend(request):
 
 			friend = Friend.objects.get(user=client,friend=to_client)
 			version_number = user_info.version_count + 1
-			friend.delete()
+			friend.version_id = version_number
+			friend.nickname = to_client_info.nickname
+			friend.group = u'我的好友'
+			friend.verify_status = 1
+			friend.save()
+
 			user_info.version_count = version_number
 			user_info.save()
 
-			done_friend = Friend.objects.create(user=to_client,friend=to_client)
+			done_friend = Friend.objects.create(user=to_client,friend=client)
 			current_version = to_client_info.version_count+1
 			done_friend.version_id = current_version
 			done_friend.nickname = user_info.nickname
