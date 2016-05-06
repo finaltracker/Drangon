@@ -46,20 +46,30 @@ def add_friend(request):
 				logger.debug("friend already add, skip it")
 
 			except ObjectDoesNotExist:
+
 				wait_friend = Friend.objects.create(user=add_client, friend=client)
 				current_version = add_client_info.version_count + 1
-				wait_friend.verify_status = 2
-				wait_friend.group = u"待验证好友"
+
+				try:
+					have_already_friend = Friend.objects.get(user=client, friend=add_client)
+
+					wait_friend.verify_status = 1
+					wait_friend.group = u'我的好友'
+
+				except ObjectDoesNotExist:
+
+					wait_friend.verify_status = 2
+					wait_friend.group = u"待验证好友"
+
+					push_target = add_client_info.imsi
+					logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
+					jpush_send_message(str(mobile),push_target, 202)
+
 				wait_friend.version_id = current_version
 				wait_friend.save()
 
 				add_client_info.version_count = current_version
 				add_client_info.save()
-
-				push_target = add_client_info.imsi
-
-				logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
-				jpush_send_message(str(mobile),push_target, 202)
 
 			data['status']=0
 			data['server_friend_version'] = current_version
