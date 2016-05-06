@@ -65,5 +65,13 @@ class userTests(TestCase):
 	
 		response = self.client.post(reverse('user:delete_user'), json_data) 
 
-		self.assertEqual(response.content, "ok")		
+		self.assertEqual(response.content, "ok")
 
+	def test_5_get_nickname(self):
+		json_data = {
+			"mobile": 12345993,
+		}
+	
+		response = self.client.post(reverse('user:get_nickname'), json_data) 
+
+		self.assertEqual(response.content, "ok")
