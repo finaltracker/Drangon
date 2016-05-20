@@ -112,7 +112,7 @@ def get_friend(request):
 					record = {}
 					friend_userinfo = UserInfo.objects.get(user=friend.friend)
 					record['group'] = smart_unicode(friend.group)
-					record['nickname'] = friend.friend.nickname
+					record['nickname'] = friend_userinfo.nickname
 					#TODO: fix it
 					record['avatar_url'] = friend_userinfo.avatar_url()
 			
