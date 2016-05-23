@@ -168,19 +168,31 @@ def accept_friend(request):
 			user_info.version_count = version_number
 			user_info.save()
 
-			done_friend = Friend.objects.create(user=to_client,friend=client)
-			current_version = to_client_info.version_count+1
-			done_friend.version_id = current_version
-			done_friend.nickname = user_info.nickname
-			done_friend.group = u'我的好友'
-			done_friend.verify_status = 1
-			done_friend.save()
-			to_client_info.version_count = current_version
-			to_client_info.save()
+			try:
+				has_done_friend = Friend.objects.get(user=to_client,friend=client)
+				logger.debug("friend already has, skip it")
+				if has_done_friend.verify_status != 1:
+					has_done_friend.verify_status = 1
+				if has_done_friend.group != u'我的好友':
+					has_done_friend.group = u'我的好友'
 
-			push_target = to_client_info.imsi
-			logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
-			jpush_send_message(str(mobile),push_target, 202)
+				to_client_info.version_count += 1
+				to_client_info.save()
+				
+			except ObjectDoesNotExist:
+				done_friend = Friend.objects.create(user=to_client,friend=client)
+				current_version = to_client_info.version_count+1
+				done_friend.version_id = current_version
+				done_friend.nickname = user_info.nickname
+				done_friend.group = u'我的好友'
+				done_friend.verify_status = 1
+				done_friend.save()
+				to_client_info.version_count = current_version
+				to_client_info.save()
+
+				push_target = to_client_info.imsi
+				logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
+				jpush_send_message(str(mobile),push_target, 202)
 
 			data['status']=0
 			data['server_friend_version']=version_number
