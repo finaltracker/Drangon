@@ -55,7 +55,7 @@ def locate_get(request):
 			
 			for relative_friend in friends:
 				friend_all_pos=PosInfo.objects.filter(user=relative_friend.friend)
-				target_pos = friend_all_pos[-1]
+				target_pos = friend_all_pos[len(friend_all_pos)-1]
 				relative = {}
 				relative['friend_mobile'] = relative_friend.friend.username
 				relative['lat'] = target_pos.lat
@@ -71,7 +71,7 @@ def locate_get(request):
 			user=User.objects.get(username=target_user)		
 			all_pos=PosInfo.objects.filter(user=user)
 			#delta = (timezone.now() - target_pos.date).hours
-			target_pos = all_pos[-1]
+			target_pos = all_pos[len(all_pos)-1]
 			delta = 0
 			if delta < threshold:
 				data['status']=0
