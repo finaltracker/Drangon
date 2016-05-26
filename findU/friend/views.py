@@ -22,16 +22,18 @@ def add_friend(request):
 		logger.debug(str(request.POST))
 
 		mobile = request.POST.get('mobile')
-		logger.debug("src mobile : "+mobile)
+		logger.debug("[Add Friend]src mobile : "+mobile)
 		try:
 			client = User.objects.get(username=mobile)
 			user_info = UserInfo.objects.get(user = client)
 		except ObjectDoesNotExist:
 			data['status']=34
 			data['error']='user do not exist'
+			logger.debug("[Add Friend]owner or friend don't exist.")
 			return HttpResponse(toJSON(data),content_type='application/json')
 
 		add_friend = request.POST.get('friend_mobile')
+		logger.debug("[Add Friend]friend: "+add_friend)
 		# comment: for identify who that add
 		# comment = request.POST.get('comment')
 
@@ -65,11 +67,15 @@ def add_friend(request):
 					logger.debug("[PUSH]src mobile : "+str(mobile)+push_target)
 					jpush_send_message(str(mobile),push_target, 202)
 
+				logger.debug("[Add Friend]friend group: "+wait_friend.group)
+
 				wait_friend.version_id = current_version
 				wait_friend.save()
 
 				add_client_info.version_count = current_version
 				add_client_info.save()
+
+			logger.debug("[Add Friend]friend return ok")
 
 			data['status']=0
 			data['server_friend_version'] = current_version
