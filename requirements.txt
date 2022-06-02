@@ -8,7 +8,7 @@ celery==3.1.19
 chardet==2.0.1
 colorama==0.2.5
 django-celery==3.1.17
-html5lib==0.999
+html5lib==0.99999999
 jpush==3.1.2
 kombu==3.0.29
 psycopg2==2.4.5
