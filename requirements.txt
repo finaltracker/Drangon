@@ -14,7 +14,7 @@ kombu==3.0.29
 psycopg2==2.4.5
 pytz==2015.7
 redis==2.10.5
-requests==2.2.1
+requests==2.20.0
 six==1.5.2
 uWSGI==2.0.11.2
 urllib3==1.7.1
